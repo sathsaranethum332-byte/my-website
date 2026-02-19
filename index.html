@@ -146,6 +146,57 @@ button:hover{
     100%{transform:rotate(360deg);}
 }
 
+/* 3 Dot Button */
+.menu-btn{
+    position:absolute;
+    right:20px;
+    top:20px;
+    font-size:28px;
+    cursor:pointer;
+}
+
+/* Sidebar Menu */
+.sidebar{
+    position:fixed;
+    top:0;
+    right:-300px;
+    width:250px;
+    height:100%;
+    background:linear-gradient(45deg,#0f2027ca,#8d2de2cb);
+    box-shadow:-5px 0 20px black;
+    padding:20px;
+    transition:0.4s;
+    z-index:999;
+}
+ll{
+    color: rgb(255, 0, 0);
+    font-weight: 900;
+}
+
+l{
+    color: rgb(0, 255, 0);
+    font-weight: 900;
+}
+.sidebar h3{
+    margin-top:40px;
+}
+
+.sidebar p{
+    font-size:14px;
+    line-height:1.6;
+}
+
+.close-btn{
+    font-size:22px;
+    cursor:pointer;
+    float:right;
+}
+
+.container{
+    padding:20px;
+    animation:fadeIn 1.5s ease;
+}
+
 .price{
     font-size:22px;
     margin:15px;
@@ -170,7 +221,26 @@ h2{
 
 <body>
 
-<header>⚡ ROLLEX GAMING TOPUP ⚡</header>
+<header>⚡ ROLLEX GAMING TOPUP ⚡
+    <span class="menu-btn" onclick="openMenu()">&#8942;</span>
+</header>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sideMenu">
+<span class="close-btn" onclick="closeMenu()">✖</span>
+
+<h3>📌 About</h3>
+<p>ROLLEX GAMING TOPUP is a fast and secure gaming topup service.</p>
+
+<h3>📞 Contact</h3>
+<p>WhatsApp: 0741962754<ll> (Busy)</ll></p>
+<p>WhatsApp: 0756706560<l> (Recommended)</l></p>
+
+<h3>👁 View</h3>
+<p>Version 1.0 | Secure Payment</p>
+
+</div>
 
 <div class="container" id="home">
 
@@ -251,6 +321,19 @@ h2{
 
 <script>
 
+    function openMenu(){
+    document.getElementById("sideMenu").style.right="0";
+}
+
+function closeMenu(){
+    document.getElementById("sideMenu").style.right="-300px";
+}
+
+function loadGame(game){
+    alert(game+" page loading...");
+}
+
+
 let selectedGame="";
 
 function loadGame(game){
@@ -303,7 +386,10 @@ function sendOrder(){
     window.open("https://wa.me/94741962754?text="+message,"_blank");
 }
 
+
 </script>
+
+
 
 </body>
 </html>
