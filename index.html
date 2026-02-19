@@ -13,7 +13,7 @@ body{
     font-family:'Segoe UI',sans-serif;
     color:white;
     text-align:center;
-    background: linear-gradient(-45deg,#0f2027,#00f2ff,#8e2de2);
+    background: linear-gradient(-45deg,#0f2027,#0c0028,#8e2de2);
     background-size:400% 400%;
     animation:gradientBG 8s ease infinite;
     overflow-x:hidden;
@@ -55,7 +55,7 @@ header{
     font-weight:bold;
     letter-spacing:2px;
     background:rgba(0,0,0,0.4);
-    box-shadow:0 0 20px cyan;
+    box-shadow:0 0 20px #00e5ff;
     animation:fadeIn 1.5s ease;
 }
 
@@ -69,7 +69,7 @@ header{
     background:rgba(255,255,255,0.1);
     backdrop-filter:blur(15px);
     padding:25px;
-    margin:20px auto;
+    margin:50px auto;
     width:300px;
     border-radius:20px;
     box-shadow:0 0 25px cyan;
@@ -86,7 +86,7 @@ header{
 
 .card:hover{
     transform:scale(1.08);
-    box-shadow:0 0 40px #00f2ff;
+    box-shadow:0 0 45px #00e5ff;
 }
 
 select,input{
@@ -109,7 +109,7 @@ button{
     font-weight:bold;
     cursor:pointer;
     transition:0.3s;
-    animation:pulse 2s infinite;
+    animation:pulse 1s infinite;
 }
 
 @keyframes pulse{
@@ -128,8 +128,8 @@ button:hover{
 
 /* Loader */
 .loader{
-    border:6px solid rgba(255,255,255,0.3);
-    border-top:6px solid cyan;
+    border:6px solid #8e2de2;
+    border-top:6px solid rgb(0, 0, 0);
     border-radius:50%;
     width:50px;
     height:50px;
@@ -146,9 +146,9 @@ button:hover{
     font-size:22px;
     margin:15px;
     font-family: fantasy;
-    color:#000000;
-    font-weight: 900;
-    text-shadow:0 0 11px cyan;
+    color:#ffffff;
+    font-weight: 00;
+    text-shadow:0 0 11px rgb(0, 0, 0);
 }
 
 @keyframes fadeIn{
@@ -172,7 +172,11 @@ button:hover{
 </div>
 
 <div class="card" onclick="loadGame('PUBG')">
-🎯 PUBG UC
+🔥 PUBG 💎
+</div>
+
+<div class="card" onclick="loadGame('CALL OF DUTY')">
+🔥 CALL OF DUTY 💎
 </div>
 
 </div>
@@ -187,37 +191,42 @@ button:hover{
 
 <input type="text" id="playerId" placeholder="Enter Player ID">
 
+
+
 <select id="server">
 <option value="">Select Server</option>
-<option value="singapore">singapore</option>
+<option value="Singapore">Singapore</option>
 <option value="Asia">Asia</option>
+<option value="Brazil">Brazil</option>
+<option value="India">India</option>
+<option value="Indonesia">Indonesia</option>
 <option value="Europe">Europe</option>
 <option value="Middle East">Middle East</option>
 </select>
 
 <select id="diamond" onchange="updatePrice()">
 <option value="">Select Amount 💎</option>
-<option value="Weekly lite 90 💎" data-price="130">Weekly lite 90 💎</option>
-<option value="Weekly 490 💎" data-price="520">Weekly 490 💎</option>
-<option value="Monthly 2500 💎" data-price="2600">Monthly 2500 💎</option>
+<option value="Weekly lite💎" data-price="130">Weekly lite💎</option>
+<option value="Weekly💎" data-price="530">Weekly💎</option>
+<option value="Monthly💎" data-price="2600">Monthly💎</option>
 
-<option value="Level   6=  💎120" data-price="120">Level   6=  💎120
-</option>
-<option value="Level 10=  💎215" data-price="220">Level 10=  💎215</option>
+<option value="3x Monthly💎" data-price="7710">3x Monthly💎</option>
+<option value="Weekly💎 + Monthly💎" data-price="3110">Weekly💎 + Monthly💎</option>
+<option value="2x Weekly💎 + 2x Weekly lite💎" data-price="1300">2x Weekly💎 + 2x Weekly lite💎</option>
+<option value="Weekly💎 + Weekly lite💎 + Monthly💎" data-price="3300">Weekly💎 + Weekly lite💎 + Monthly💎</option>
 
-<option value="️Level 15=   💎215" data-price="220">️Level 15=   💎215</option>
+<option value="Evo Access 3D💎" data-price="190">Evo Access 3D💎</option>
+<option value="Evo Access 7D💎" data-price="320">Evo Access 7D💎</option>
+<option value="Evo Access 30D💎" data-price="920">Evo Access 30D💎</option>
 
-<option value="️Level 20=  💎215" data-price="220">️Level 20=   💎215</option>
-
-<option value="Level 25=  💎215" data-price="220">Level 25=   💎215</option>
-<option value="️Level 30=  💎375" data-price="400">️Level 30=  💎375</option>
-<option value="Full level up pack= 💎1355" data-price="1400">Full level up pack= 💎1355</option>
 <option value="25" data-price="90">25 💎</option>
-<option value="100" data-price="300">100 💎</option>
+<option value="100" data-price="320">100 💎</option>
 <option value="310" data-price="900">310 💎</option>
 <option value="520" data-price="1,500">520 💎</option>
-<option value="1060" data-price="2,950">1060 💎</option>
+<option value="1060" data-price="2,920">1060 💎</option>
 <option value="2180" data-price="5,900">2180 💎</option>
+<option value="5600" data-price="14,700">5600 💎</option>
+<option value="11500" data-price="30,300">11500 💎</option>
 </select>
 
 <div class="price" id="priceDisplay">Price: Rs 0</div>
@@ -278,7 +287,9 @@ function sendOrder(){
     "%0A💎 Diamonds: "+diamond+
     "%0A💰 Price: Rs "+price+
     "%0A🆔 Player ID: "+playerId+
+
     "%0A🌍 Server: "+server;
+    
 
     window.open("https://wa.me/94741962754?text="+message,"_blank");
 }
