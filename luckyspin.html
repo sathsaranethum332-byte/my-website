@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLLEX Lucky Spin</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:#0d0d1a;
+text-align:center;
+color:white;
+min-height:100vh;
+overflow:hidden;
+position:relative;
+}
+
+/* Lightning Background */
+.lightning{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:
+linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+background-size:200% 200%;
+animation:lightMove 3s linear infinite;
+pointer-events:none;
+}
+
+@keyframes lightMove{
+0%{background-position:-200% 0;}
+100%{background-position:200% 0;}
+}
+
+h1{ margin-top:30px; }
+
+/* ===== Wheel Container ===== */
+.wheel-container{
+position:relative;
+width:320px;
+height:320px;
+margin:40px auto;
+}
+
+/* ===== Wheel Design ===== */
+.wheel{
+width:100%;
+height:100%;
+border-radius:50%;
+border:8px solid #1a1a80;
+position:relative;
+transition:transform 4s ease-out;
+background:
+conic-gradient(
+#1f2937 0deg 45deg,
+#111827 45deg 90deg,
+#1f2937 90deg 135deg,
+#111827 135deg 180deg,
+#1f2937 180deg 225deg,
+#111827 225deg 270deg,
+#00aaff 270deg 315deg,   /* GRAND PRIZE */
+#111827 315deg 360deg
+);
+}
+
+/* Segment Text */
+.segment{
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:13px;
+font-weight:bold;
+text-align:center;
+transform-origin:center;
+pointer-events:none;
+}
+
+/* Rotate each text */
+.s1{ transform:rotate(22.5deg) translateY(-120px) rotate(-22.5deg); }
+.s2{ transform:rotate(67.5deg) translateY(-120px) rotate(-67.5deg); }
+.s3{ transform:rotate(112.5deg) translateY(-120px) rotate(-112.5deg); }
+.s4{ transform:rotate(157.5deg) translateY(-120px) rotate(-157.5deg); }
+.s5{ transform:rotate(202.5deg) translateY(-120px) rotate(-202.5deg); }
+.s6{ transform:rotate(247.5deg) translateY(-120px) rotate(-247.5deg); }
+.s7{ transform:rotate(292.5deg) translateY(-120px) rotate(-292.5deg); }
+.s8{ transform:rotate(337.5deg) translateY(-120px) rotate(-337.5deg); }
+
+/* Pointer */
+.pointer{
+position:absolute;
+top:-15px;
+left:50%;
+transform:translateX(-50%);
+width:0;height:0;
+border-left:15px solid transparent;
+border-right:15px solid transparent;
+border-bottom:30px solid gold;
+z-index:2;
+}
+
+/* Buttons */
+button{
+padding:14px 35px;
+border:1px solid #00aaff;
+border-radius:30px;
+background:#111;
+color:#00aaff;
+font-weight:bold;
+cursor:pointer;
+margin:10px;
+font-size:16px;
+transition:0.3s;
+}
+
+button:hover{
+background:#001f33;
+transform:scale(1.05);
+}
+
+#spinInfo{
+margin-top:10px;
+font-size:18px;
+}
+
+/* Popup */
+.popup{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.85);
+z-index:999;
+}
+
+.popup.active{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:#111;
+padding:30px;
+border-radius:20px;
+box-shadow:0 0 20px #003366;
+text-align:center;
+}
+
+.big-win{
+animation:flash 0.5s infinite alternate;
+}
+
+@keyframes flash{
+from{color:#00ff00;}
+to{color:#ffff00;}
+}
+
+input{
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+border:none;
+width:80%;
+}
+
+</style>
+</head>
+<body>
+
+<div class="lightning"></div>
+
+<h1>🎡 ROLLEX LUCKY SPIN 🎡</h1>
+
+<div class="wheel-container">
+<div class="pointer"></div>
+
+<div class="wheel" id="wheel">
+
+<div class="segment s1">TRY AGAIN</div>
+<div class="segment s2">TRY AGAIN</div>
+<div class="segment s3">TRY AGAIN</div>
+<div class="segment s4">TRY AGAIN</div>
+<div class="segment s5">TRY AGAIN</div>
+<div class="segment s6">TRY AGAIN</div>
+<div class="segment s7">💎 20 DIAMONDS 💎</div>
+<div class="segment s8">TRY AGAIN</div>
+
+</div>
+</div>
+
+<button onclick="spin()">SPIN NOW</button>
+<div id="spinInfo"></div>
+
+<!-- Popup -->
+<div id="popup" class="popup">
+<div class="box">
+<h2 id="resultTitle"></h2>
+<p id="resultText"></p>
+
+<div id="claimSection">
+<input type="text" id="gameId" placeholder="Enter Game ID">
+<br>
+<button onclick="send()">Send</button>
+</div>
+
+<br>
+<button onclick="closePopup()">Back</button>
+</div>
+</div>
+
+<script>
+
+let wheel = document.getElementById("wheel");
+let popup = document.getElementById("popup");
+let claimSection = document.getElementById("claimSection");
+let spinInfo = document.getElementById("spinInfo");
+
+let prizes = [
+"Try Again","Try Again","Try Again","Try Again",
+"Try Again","Try Again","GRAND","Try Again"
+];
+
+let selectedPrize = "";
+
+let maxSpins = 3;
+
+function getSpinData(){
+let data = JSON.parse(localStorage.getItem("spinData"));
+if(!data){
+data = { spinsLeft: maxSpins, resetTime: null };
+localStorage.setItem("spinData", JSON.stringify(data));
+}
+return data;
+}
+
+function updateSpinInfo(){
+let data = getSpinData();
+if(data.spinsLeft > 0){
+spinInfo.innerHTML = "Spins Left Today: " + data.spinsLeft;
+}else{
+startCountdown();
+}
+}
+
+function spin(){
+let data = getSpinData();
+
+if(data.spinsLeft <= 0){
+alert("⛔ No spins left!");
+return;
+}
+
+data.spinsLeft--;
+if(data.spinsLeft === 0){
+data.resetTime = Date.now() + (24*60*60*1000);
+}
+
+localStorage.setItem("spinData", JSON.stringify(data));
+updateSpinInfo();
+
+let randomDegree = Math.floor(Math.random()*360) + 1440;
+wheel.style.transform = "rotate("+randomDegree+"deg)";
+
+setTimeout(()=>{
+
+let actualDegree = randomDegree % 360;
+let index = Math.floor((360 - actualDegree) / 45) % 8;
+
+selectedPrize = prizes[index];
+
+if(selectedPrize==="GRAND"){
+document.getElementById("resultTitle").innerHTML="🎉 BIG WINNER 🎉";
+document.getElementById("resultTitle").classList.add("big-win");
+document.getElementById("resultText").innerHTML=
+"You Won 💎 20 Diamonds 💎";
+claimSection.style.display="block";
+}else{
+document.getElementById("resultTitle").innerHTML="😢 Try Again";
+document.getElementById("resultText").innerHTML="Better Luck Next Time!";
+claimSection.style.display="none";
+}
+
+popup.classList.add("active");
+
+},4000);
+}
+
+function startCountdown(){
+let data = getSpinData();
+
+let interval = setInterval(()=>{
+let now = Date.now();
+let diff = data.resetTime - now;
+
+if(diff <= 0){
+clearInterval(interval);
+localStorage.removeItem("spinData");
+updateSpinInfo();
+return;
+}
+
+let hours = Math.floor(diff/1000/60/60);
+let minutes = Math.floor((diff/1000/60)%60);
+let seconds = Math.floor((diff/1000)%60);
+
+spinInfo.innerHTML =
+"⏳ Reset In: " + hours+"h "+minutes+"m "+seconds+"s";
+
+},1000);
+}
+
+function send(){
+let gameId = document.getElementById("gameId").value;
+if(gameId==""){ alert("Enter Game ID"); return; }
+
+let message =
+"🎉 Lucky Spin Winner!\n\nPrize: 💎 20 Diamonds 💎"+
+"\nGame ID: "+gameId;
+
+window.open(
+"https://wa.me/94756706560?text="+
+encodeURIComponent(message),
+"_blank"
+);
+}
+
+function closePopup(){
+popup.classList.remove("active");
+document.getElementById("gameId").value="";
+}
+
+updateSpinInfo();
+
+</script>
+
+</body>
+</html>

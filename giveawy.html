@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLLEX GIVEAWAYS</title>
+
+<style>
+
+/* ===== DARK TECH BACKGROUND ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    color:white;
+    background:#0b0f1a;
+    overflow-x:hidden;
+    position:relative;
+}
+
+/* ===== Lightning Sweep ===== */
+.lightning{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:
+    linear-gradient(120deg,
+    transparent 40%,
+    rgba(255,255,255,0.08) 50%,
+    transparent 60%);
+    background-size:200% 200%;
+    animation:lightMove 4s linear infinite;
+    pointer-events:none;
+}
+
+@keyframes lightMove{
+    0%{background-position:-200% 0;}
+    100%{background-position:200% 0;}
+}
+
+/* ===== Flash Effect ===== */
+.flash{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(255,255,255,0.04);
+    opacity:0;
+    pointer-events:none;
+    animation:flashAnim 6s infinite;
+}
+
+@keyframes flashAnim{
+    0%,90%,100%{opacity:0;}
+    92%{opacity:0.2;}
+    94%{opacity:0;}
+    96%{opacity:0.15;}
+}
+
+/* ===== Title ===== */
+.title{
+    text-align:center;
+    padding:40px 20px;
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+/* ===== Cards ===== */
+.container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:25px;
+    padding:20px;
+}
+
+.card{
+    width:280px;
+    padding:25px;
+    border-radius:20px;
+    background: rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:0 0 25px rgba(0,0,0,0.6);
+    transition:0.4s;
+    text-align:center;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+/* ===== Button ===== */
+.btn{
+    margin-top:15px;
+    padding:10px 20px;
+    border:1px solid #00aaff;
+    border-radius:30px;
+    background:#111;
+    color:#00aaff;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#001f33;
+    transform:scale(1.05);
+}
+
+/* ===== TECH LOADER ===== */
+.loader{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#0b0f1a;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
+}
+
+.loader.active{
+    display:flex;
+}
+
+.spinner{
+    width:80px;
+    height:80px;
+    border:6px solid rgba(255,255,255,0.1);
+    border-top:6px solid #00aaff;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    0%{transform:rotate(0deg);}
+    100%{transform:rotate(360deg);}
+}
+
+.loading-text{
+    margin-top:20px;
+    font-size:18px;
+    letter-spacing:2px;
+}
+
+@media(max-width:768px){
+    .card{
+        width:90%;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="lightning"></div>
+<div class="flash"></div>
+
+<div class="title">
+🔥 ROLLEX ULTRA GIVEAWAYS 🔥
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>🎡 Lucky Spin</h2>
+        <p>Spin 3 times per day & win free diamonds!</p>
+        <button class="btn" onclick="startLoading()">Play Now</button>
+    </div>
+
+   
+</div>
+
+<!-- LOADING SCREEN -->
+<div class="loader" id="loader">
+    <div class="spinner"></div>
+    <div class="loading-text">LOADING LUCKY SPIN...</div>
+</div>
+
+<script>
+
+function startLoading(){
+    document.getElementById("loader").classList.add("active");
+
+    setTimeout(()=>{
+        window.location.href="luckyspin.html";
+    },2500);
+}
+
+</script>
+
+</body>
+</html>
