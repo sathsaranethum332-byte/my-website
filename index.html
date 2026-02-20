@@ -177,6 +177,32 @@ select,input{
             opacity: 1;
         }
 
+
+            .banners {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banners img {
+            box-shadow:0 0 20px #00e5ff;
+            border-radius: 10px;
+            position: absolute;
+            max-width: 95%;
+            max-height: 80%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .banners img.active {
+            opacity: 1;
+        }
+
 /* Button Glow Animation */
 button{
     margin-top: 20px;
@@ -326,6 +352,10 @@ h2{
 <h3>👁 View</h3>
 <p>Version 1.0 | Secure Payment</p>
 
+h3>👁 View</h3>
+<p>Version 1.0 | Secure Payment</p>
+
+
 </div>
 
 <div class="container" id="home">
@@ -333,11 +363,11 @@ h2{
 
 
 <div class="banner">
-    <img src="baner2.png.jpeg" >
-
+    <img src="baner2.png.jpeg" class="active">
+   
     
 </div>
-<h2>SELECT YOUR GAME </h2>
+
 
 <div class="card" onclick="loadGame('FREE FIRE')">
 🔥 FREE FIRE 💎
@@ -355,11 +385,21 @@ h2{
 
 <div class="container hidden" id="gamePage">
 
-<div class="loader" id="loader"></div>
+<div class="loader" id="loader">
+
+</div>
 
 <div id="content" class="hidden">
+    
 
 <h2 id="gameTitle"></h2>
+
+<div class="banners">
+
+    <img src="baner2.png.jpeg" class="active">
+
+    
+</div>
 
 <input type="text" id="playerId" placeholder="Enter Player ID">
 
@@ -423,14 +463,15 @@ h2{
         index = (index + 1) % slides.length;
         slides[index].classList.add("active");
     }
+    setInterval(changeSlide, 3000);
 
-    setInterval(changeSlide, 5000);
 
+    
 /* ===== Splash Screen Auto Hide ===== */
 window.addEventListener("load",function(){
     setTimeout(function(){
         document.getElementById("splashScreen").style.display="none";
-    },4000);
+    },2000);
 });
 
 /* ===== Your Original JS ===== */
@@ -498,5 +539,6 @@ function sendOrder(){
 
 </body>
 </html>
+
 
 
