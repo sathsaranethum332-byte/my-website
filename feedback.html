@@ -6,6 +6,7 @@
 <title>ROLLEX GAMING - Live Feedback</title>
 
 <style>
+
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
@@ -14,6 +15,7 @@ background-size:400% 400%;
 animation:bgMove 10s ease infinite;
 color:white;
 text-align:center;
+overflow-x:hidden;
 }
 
 @keyframes bgMove{
@@ -25,11 +27,17 @@ text-align:center;
 .container{
 max-width:650px;
 margin:60px auto;
-background:rgba(0,0,0,0.65);
+background:rgba(0,0,0,0.7);
 padding:30px;
 border-radius:20px;
 backdrop-filter:blur(15px);
-box-shadow:0 0 30px #00f0ff;
+box-shadow:0 0 40px #00f0ff;
+animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(20px);}
+to{opacity:1; transform:translateY(0);}
 }
 
 input, textarea{
@@ -40,6 +48,7 @@ border:none;
 border-radius:10px;
 background:#111;
 color:white;
+box-shadow:0 0 10px #8f00ff inset;
 }
 
 button{
@@ -51,6 +60,12 @@ margin:8px 0;
 font-weight:bold;
 background:linear-gradient(45deg,#00f0ff,#8f00ff);
 color:white;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 20px #00f0ff;
 }
 
 .feedback{
@@ -58,8 +73,14 @@ background:#111;
 padding:15px;
 border-radius:12px;
 margin:15px 0;
-box-shadow:0 0 15px #00f0ff;
+box-shadow:0 0 20px #00f0ff;
 position:relative;
+animation:pop 0.4s ease;
+}
+
+@keyframes pop{
+from{transform:scale(0.9); opacity:0;}
+to{transform:scale(1); opacity:1;}
 }
 
 .delete-btn{
@@ -69,19 +90,22 @@ right:10px;
 top:10px;
 }
 
-/* HIDE ADMIN PANEL */
+/* Admin panel hidden by default */
 #adminPanel{
 display:none;
 }
+
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<h2 style="color:#00f0ff;">🎮 LIVE GAMING FEEDBACK</h2>
+<h2 style="color:#00f0ff;text-shadow:0 0 15px #00f0ff;">
+🎮 LIVE GAMING FEEDBACK
+</h2>
 
-<!-- 🔐 ADMIN PANEL (Hidden by default) -->
+<!-- 🔐 ADMIN PANEL -->
 <div id="adminPanel">
 <h3>Admin Login</h3>
 <input type="email" id="adminEmail" placeholder="Admin Email">
@@ -90,7 +114,7 @@ display:none;
 <hr>
 </div>
 
-<!-- CUSTOMER -->
+<!-- CUSTOMER AREA -->
 <input type="text" id="name" placeholder="Your Name">
 <textarea id="message" placeholder="Your Feedback"></textarea>
 <button onclick="addFeedback()">Submit Feedback</button>
@@ -105,7 +129,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* ===== YOUR REAL FIREBASE CONFIG ===== */
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBuM8CLvGn_e2nn7KNv8BK5XaCU9qoDi5U",
   authDomain: "feedback-dae72.firebaseapp.com",
@@ -124,7 +148,7 @@ const auth = getAuth(app);
 
 let currentUser = null;
 
-/* 🔐 Detect Login State */
+/* 🔐 LOGIN STATE CHECK */
 onAuthStateChanged(auth,(user)=>{
 currentUser = user;
 
@@ -132,6 +156,7 @@ if(user && user.email === ADMIN_EMAIL){
 document.getElementById("adminPanel").style.display="block";
 }
 
+loadFeedback();
 });
 
 /* 🔐 ADMIN LOGIN */
@@ -144,7 +169,7 @@ signInWithEmailAndPassword(auth,email,pass)
 .catch(err=>alert(err.message));
 }
 
-/* ADD FEEDBACK */
+/* ➕ ADD FEEDBACK */
 window.addFeedback = function(){
 const name = document.getElementById("name").value.trim();
 const message = document.getElementById("message").value.trim();
@@ -164,7 +189,8 @@ document.getElementById("name").value="";
 document.getElementById("message").value="";
 }
 
-/* LOAD FEEDBACK */
+/* 📥 LOAD FEEDBACK */
+function loadFeedback(){
 onValue(ref(db,"feedbacks"),(snapshot)=>{
 const data = snapshot.val();
 const list = document.getElementById("feedbackList");
@@ -187,8 +213,9 @@ ${currentUser && currentUser.email===ADMIN_EMAIL
 });
 }
 });
+}
 
-/* DELETE (ADMIN ONLY) */
+/* ❌ DELETE (ADMIN ONLY FRONTEND CHECK) */
 window.deleteFeedback = function(key){
 if(currentUser && currentUser.email===ADMIN_EMAIL){
 remove(ref(db,"feedbacks/"+key));
