@@ -6,7 +6,6 @@
 <title>ROLLEX GAMING - Live Feedback</title>
 
 <style>
-
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
@@ -15,7 +14,6 @@ background-size:400% 400%;
 animation:bgMove 10s ease infinite;
 color:white;
 text-align:center;
-overflow-x:hidden;
 }
 
 @keyframes bgMove{
@@ -32,12 +30,6 @@ padding:30px;
 border-radius:20px;
 backdrop-filter:blur(15px);
 box-shadow:0 0 40px #00f0ff;
-animation:fadeIn 1s ease;
-}
-
-@keyframes fadeIn{
-from{opacity:0; transform:translateY(20px);}
-to{opacity:1; transform:translateY(0);}
 }
 
 input, textarea{
@@ -52,20 +44,19 @@ box-shadow:0 0 10px #8f00ff inset;
 }
 
 button{
-padding:12px;
+padding:10px 15px;
 border:none;
 border-radius:10px;
 cursor:pointer;
-margin:8px 0;
+margin:5px 5px 5px 0;
 font-weight:bold;
 background:linear-gradient(45deg,#00f0ff,#8f00ff);
 color:white;
-transition:0.3s;
 }
 
 button:hover{
 transform:scale(1.05);
-box-shadow:0 0 20px #00f0ff;
+box-shadow:0 0 15px #00f0ff;
 }
 
 .feedback{
@@ -75,37 +66,37 @@ border-radius:12px;
 margin:15px 0;
 box-shadow:0 0 20px #00f0ff;
 position:relative;
-animation:pop 0.4s ease;
-}
-
-@keyframes pop{
-from{transform:scale(0.9); opacity:0;}
-to{transform:scale(1); opacity:1;}
+text-align:left;
 }
 
 .delete-btn{
 background:red;
-position:absolute;
-right:10px;
-top:10px;
 }
 
-/* Admin panel hidden by default */
+.reply-area{
+margin-top:10px;
+}
+
+.reply-box{
+margin-top:10px;
+padding:10px;
+background:#1a1a1a;
+border-radius:8px;
+color:#00f0ff;
+box-shadow:0 0 10px #00f0ff;
+}
+
 #adminPanel{
 display:none;
 }
-
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<h2 style="color:#00f0ff;text-shadow:0 0 15px #00f0ff;">
-🎮 LIVE GAMING FEEDBACK
-</h2>
+<h2 style="color:#00f0ff;">🎮 LIVE GAMING FEEDBACK</h2>
 
-<!-- 🔐 ADMIN PANEL -->
 <div id="adminPanel">
 <h3>Admin Login</h3>
 <input type="email" id="adminEmail" placeholder="Admin Email">
@@ -114,7 +105,6 @@ display:none;
 <hr>
 </div>
 
-<!-- CUSTOMER AREA -->
 <input type="text" id="name" placeholder="Your Name">
 <textarea id="message" placeholder="Your Feedback"></textarea>
 <button onclick="addFeedback()">Submit Feedback</button>
@@ -126,10 +116,9 @@ display:none;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBuM8CLvGn_e2nn7KNv8BK5XaCU9qoDi5U",
   authDomain: "feedback-dae72.firebaseapp.com",
@@ -148,7 +137,7 @@ const auth = getAuth(app);
 
 let currentUser = null;
 
-/* 🔐 LOGIN STATE CHECK */
+/* LOGIN STATE */
 onAuthStateChanged(auth,(user)=>{
 currentUser = user;
 
@@ -159,7 +148,7 @@ document.getElementById("adminPanel").style.display="block";
 loadFeedback();
 });
 
-/* 🔐 ADMIN LOGIN */
+/* ADMIN LOGIN */
 window.adminLogin = function(){
 const email = document.getElementById("adminEmail").value;
 const pass = document.getElementById("adminPass").value;
@@ -169,7 +158,7 @@ signInWithEmailAndPassword(auth,email,pass)
 .catch(err=>alert(err.message));
 }
 
-/* ➕ ADD FEEDBACK */
+/* ADD FEEDBACK */
 window.addFeedback = function(){
 const name = document.getElementById("name").value.trim();
 const message = document.getElementById("message").value.trim();
@@ -189,37 +178,108 @@ document.getElementById("name").value="";
 document.getElementById("message").value="";
 }
 
-/* 📥 LOAD FEEDBACK */
+/* LOAD FEEDBACK */
 function loadFeedback(){
-onValue(ref(db,"feedbacks"),(snapshot)=>{
+
+const feedbackRef = ref(db,"feedbacks");
+
+onValue(feedbackRef,(snapshot)=>{
+
 const data = snapshot.val();
 const list = document.getElementById("feedbackList");
 list.innerHTML="";
 
 if(data){
+
 Object.entries(data)
 .sort((a,b)=>b[1].time - a[1].time)
 .forEach(([key,f])=>{
 
-list.innerHTML += `
-<div class="feedback">
-<strong>${f.name}</strong>
-${currentUser && currentUser.email===ADMIN_EMAIL 
-? `<button class="delete-btn" onclick="deleteFeedback('${key}')">Delete</button>` 
-: ""}
-<p>${f.message}</p>
-</div>
-`;
-});
+const card = document.createElement("div");
+card.className="feedback";
+
+const name = document.createElement("strong");
+name.innerText = f.name;
+
+const msg = document.createElement("p");
+msg.innerText = f.message;
+
+card.appendChild(name);
+card.appendChild(msg);
+
+/* SHOW REPLY TO EVERYONE */
+if(f.reply){
+const replyBox = document.createElement("div");
+replyBox.className="reply-box";
+replyBox.innerHTML="<strong>Admin Reply:</strong><br>"+f.reply;
+card.appendChild(replyBox);
 }
+
+/* ADMIN BUTTONS */
+if(currentUser && currentUser.email===ADMIN_EMAIL){
+
+const replyBtn = document.createElement("button");
+replyBtn.innerText="Reply";
+replyBtn.onclick=()=>showReplyArea(key);
+
+const deleteBtn = document.createElement("button");
+deleteBtn.className="delete-btn";
+deleteBtn.innerText="Delete";
+deleteBtn.onclick=()=>deleteFeedback(key);
+
+card.appendChild(replyBtn);
+card.appendChild(deleteBtn);
+}
+
+const replyArea = document.createElement("div");
+replyArea.className="reply-area";
+replyArea.id="replyArea-"+key;
+card.appendChild(replyArea);
+
+list.appendChild(card);
+
 });
 }
 
-/* ❌ DELETE (ADMIN ONLY FRONTEND CHECK) */
-window.deleteFeedback = function(key){
+});
+
+}
+
+/* DELETE (ADMIN ONLY) */
+function deleteFeedback(key){
 if(currentUser && currentUser.email===ADMIN_EMAIL){
 remove(ref(db,"feedbacks/"+key));
 }
+}
+
+/* SHOW REPLY AREA */
+function showReplyArea(key){
+const area = document.getElementById("replyArea-"+key);
+
+area.innerHTML=`
+<textarea id="replyInput-${key}" placeholder="Write reply..."></textarea>
+<button onclick="sendReply('${key}')">Send</button>
+`;
+}
+
+/* SEND REPLY */
+window.sendReply = function(key){
+
+if(!(currentUser && currentUser.email===ADMIN_EMAIL)){
+alert("Admin only");
+return;
+}
+
+const text = document.getElementById("replyInput-"+key).value.trim();
+
+if(!text){
+alert("Write something");
+return;
+}
+
+update(ref(db,"feedbacks/"+key),{
+reply:text
+});
 }
 
 </script>
