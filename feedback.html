@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLLEX GAMING - Live Feedback</title>
+
+<style>
+
+/* ===== LOADING SCREEN ===== */
+#loader{
+    position:fixed;
+    width:100%;
+    height:100vh;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
+}
+.loader-text{
+    color:#00f0ff;
+    font-size:22px;
+    text-shadow:0 0 15px #00f0ff;
+    animation:blink 1s infinite alternate;
+}
+@keyframes blink{
+    from{opacity:0.3;}
+    to{opacity:1;}
+}
+
+/* ===== Animated Background ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background: linear-gradient(-45deg,#0f2027,#240176,#8f00ff,#00f0ff);
+    background-size:400% 400%;
+    animation:bgMove 10s ease infinite;
+    color:white;
+    text-align:center;
+}
+@keyframes bgMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* ===== Glass Card ===== */
+.container{
+    max-width:650px;
+    margin:50px auto;
+    background:rgba(0,0,0,0.6);
+    padding:25px;
+    border-radius:20px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 0 30px #00f0ff;
+    animation:fadeIn 1s ease;
+}
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+input, textarea{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    background:#111;
+    color:white;
+    outline:none;
+    box-shadow:0 0 10px #8f00ff inset;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin:8px 0;
+    font-weight:bold;
+    background:linear-gradient(45deg,#00f0ff,#8f00ff);
+    color:white;
+    transition:0.3s;
+}
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #00f0ff;
+}
+
+.feedback{
+    background:#111;
+    padding:15px;
+    border-radius:12px;
+    margin:15px 0;
+    box-shadow:0 0 15px #00f0ff;
+    animation:fadeIn 0.5s ease;
+}
+.delete-btn{
+    background:red;
+    float:right;
+}
+
+@media(max-width:600px){
+    .container{margin:20px;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loader">
+    <div class="loader-text">Loading ROLLEX SYSTEM...</div>
+</div>
+
+<div class="container">
+  
+<h2 style="color:#00f0ff;text-shadow:0 0 15px #00f0ff;">🎮 Live Feedback</h2>
+
+<input type="email" id="adminEmail" placeholder="Admin Email">
+<input type="password" id="adminPass" placeholder="Admin Password">
+<button onclick="adminLogin()">Admin Login</button>
+
+<hr>
+
+<input type="text" id="name" placeholder="Your Name">
+<textarea id="message" placeholder="Your Feedback"></textarea>
+<button onclick="addFeedback()">Submit Feedback</button>
+
+<div id="feedbackList"></div>
+
+<div class="btna"><a href="index.html"><button>⬅ Back</button></a></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBuM8CLvGn_e2nn7KNv8BK5XaCU9qoDi5U",
+  authDomain: "feedback-dae72.firebaseapp.com",
+  databaseURL: "https://feedback-dae72-default-rtdb.firebaseio.com",
+  projectId: "feedback-dae72",
+  storageBucket: "feedback-dae72.firebasestorage.app",
+  messagingSenderId: "1090089969045",
+  appId: "1:1090089969045:web:0d8cca44747605026fc29c"
+};
+
+const ADMIN_EMAIL = "nethumsathsara100@gmail.com";
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  loadFeedback();
+  document.getElementById("loader").style.display="none";
+});
+
+window.adminLogin = function(){
+    const email = document.getElementById("adminEmail").value;
+    const pass = document.getElementById("adminPass").value;
+
+    signInWithEmailAndPassword(auth, email, pass)
+    .then(() => alert("Admin Login Success"))
+    .catch((error) => alert(error.message));
+}
+
+window.addFeedback = function(){
+    const name = document.getElementById("name").value;
+    const message = document.getElementById("message").value;
+
+    if(!name || !message){
+        alert("Fill all fields");
+        return;
+    }
+
+    push(ref(db,"feedbacks"),{
+        name:name,
+        message:message
+    });
+
+    document.getElementById("name").value="";
+    document.getElementById("message").value="";
+}
+
+function loadFeedback(){
+    onValue(ref(db,"feedbacks"),(snapshot)=>{
+        const data = snapshot.val();
+        const list = document.getElementById("feedbackList");
+        list.innerHTML="";
+
+        if(data){
+            Object.entries(data).reverse().forEach(([key,f])=>{
+                list.innerHTML += `
+                    <div class="feedback">
+                        <strong>${f.name}</strong>
+                        ${currentUser && currentUser.email === ADMIN_EMAIL 
+                          ? `<button class="delete-btn" onclick="deleteFeedback('${key}')">Delete</button>` 
+                          : ""}
+                        <p>${f.message}</p>
+                    </div>
+                `;
+            });
+        }
+    });
+}
+
+window.deleteFeedback = function(key){
+    if(currentUser && currentUser.email === ADMIN_EMAIL){
+        remove(ref(db,"feedbacks/"+key));
+    }
+}
+
+</script>
+
+</body>
+</html>
