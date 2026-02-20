@@ -26,9 +26,9 @@ left:0;
 width:100%;
 height:100%;
 background:
-linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+linear-gradient(120deg, transparent 45%, rgba(255,255,255,0.15) 50%, transparent 60%);
 background-size:200% 200%;
-animation:lightMove 3s linear infinite;
+animation:lightMove 4s linear infinite;
 pointer-events:none;
 }
 
@@ -37,7 +37,8 @@ pointer-events:none;
 100%{background-position:200% 0;}
 }
 
-h1{ margin-top:30px; }
+h1{ margin-top:30px;
+font-size: 22px; }
 
 /* ===== Wheel Container ===== */
 .wheel-container{
@@ -63,7 +64,7 @@ conic-gradient(
 #111827 135deg 180deg,
 #1f2937 180deg 225deg,
 #111827 225deg 270deg,
-#00aaff 270deg 315deg,   /* GRAND PRIZE */
+#00aaff 270deg 315deg,
 #111827 315deg 360deg
 );
 }
@@ -108,7 +109,7 @@ z-index:2;
 
 /* Buttons */
 button{
-padding:14px 35px;
+padding:10px 20px;
 border:1px solid #00aaff;
 border-radius:30px;
 background:#111;
@@ -179,6 +180,9 @@ width:80%;
 
 <h1>🎡 ROLLEX LUCKY SPIN 🎡</h1>
 
+<!-- BACK BUTTON -->
+<button onclick="goBack()">⬅ Back</button>
+
 <div class="wheel-container">
 <div class="pointer"></div>
 
@@ -229,7 +233,6 @@ let prizes = [
 ];
 
 let selectedPrize = "";
-
 let maxSpins = 3;
 
 function getSpinData(){
@@ -266,14 +269,15 @@ data.resetTime = Date.now() + (24*60*60*1000);
 localStorage.setItem("spinData", JSON.stringify(data));
 updateSpinInfo();
 
-let randomDegree = Math.floor(Math.random()*360) + 1440;
+/* SAME SPEED SPIN */
+let randomDegree = 1800 + Math.floor(Math.random()*360);
+
 wheel.style.transform = "rotate("+randomDegree+"deg)";
 
 setTimeout(()=>{
 
 let actualDegree = randomDegree % 360;
 let index = Math.floor((360 - actualDegree) / 45) % 8;
-
 selectedPrize = prizes[index];
 
 if(selectedPrize==="GRAND"){
@@ -335,6 +339,11 @@ encodeURIComponent(message),
 function closePopup(){
 popup.classList.remove("active");
 document.getElementById("gameId").value="";
+}
+
+/* BACK BUTTON FUNCTION */
+function goBack(){
+window.location.href = "giveawy.html";
 }
 
 updateSpinInfo();
