@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLLEX ULTRA PRO GAMING WALL</title>
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(135deg,#0f0f1f,#1a0033,#000814);
+color:white;
+text-align:center;
+}
+
+h1{
+padding:20px;
+color:#00f0ff;
+text-shadow:0 0 20px #00f0ff;
+}
+
+.upload-box{
+background:rgba(255,255,255,0.05);
+padding:20px;
+margin:20px;
+border-radius:20px;
+box-shadow:0 0 25px #00f0ff;
+}
+
+input,textarea{
+width:90%;
+padding:12px;
+margin:10px;
+border-radius:12px;
+border:none;
+background:#111;
+color:white;
+}
+
+.preview-img{
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:15px;
+margin-top:10px;
+display:none;
+}
+
+/* ===== Ultra Tech Send Button ===== */
+#uploadBtn{
+position:relative;
+padding:14px 35px;
+border:none;
+margin-top:20px;
+border-radius:50px;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+color:#00f0ff;
+background:transparent;
+border:2px solid #00f0ff;
+overflow:hidden;
+transition:0.3s;
+box-shadow:0 0 10px #00f0ff, 0 0 40px #00f0ff inset;
+animation:pulseGlow 2s infinite;
+}
+
+#uploadBtn:hover{
+color:black;
+background:#00f0ff;
+box-shadow:0 0 20px #00f0ff, 0 0 60px #00f0ff;
+transform:scale(1.05);
+}
+
+@keyframes pulseGlow{
+0%{box-shadow:0 0 5px #00f0ff;}
+50%{box-shadow:0 0 25px #00f0ff;}
+100%{box-shadow:0 0 5px #00f0ff;}
+}
+
+.gallery{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+margin:15px;
+padding:15px;
+border-radius:20px;
+width:260px;
+box-shadow:0 0 20px #8f00ff;
+}
+
+.card img{
+width:100%;
+border-radius:15px;
+height:200px;
+object-fit:cover;
+cursor:pointer;
+}
+
+.like-btn{
+margin:5px;
+padding:6px 12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.like{background:#00ff88;}
+.dislike{background:#ff0055;}
+.delete{background:red;color:white;}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal img{
+max-width:90%;
+max-height:90%;
+border-radius:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 ROLLEX ULTRA PRO GAMING WALL</h1>
+
+<div class="upload-box">
+<input type="text" id="name" placeholder="Gaming Name">
+<textarea id="comment" placeholder="Your Gaming Status"></textarea>
+<input type="file" id="photo" accept="image/*">
+<img id="preview" class="preview-img">
+<br>
+<button id="uploadBtn">🚀 Send Profile</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<div class="modal" id="modal">
+<img id="modalImg">
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, increment, serverTimestamp, getDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDr8IBXGK8Y9FCVXMzu3Jp3M3l82uNuMIU",
+authDomain: "gaming-wall-e6001.firebaseapp.com",
+projectId: "gaming-wall-e6001",
+storageBucket: "gaming-wall-e6001.firebasestorage.app",
+messagingSenderId: "645280927841",
+appId: "1:645280927841:web:d8d20e6cb79841cc2cda20"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ADMIN_PASSWORD = "1010";
+
+let userId = localStorage.getItem("userId");
+if(!userId){
+userId = crypto.randomUUID();
+localStorage.setItem("userId",userId);
+}
+
+const gallery = document.getElementById("gallery");
+const uploadBtn = document.getElementById("uploadBtn");
+const photoInput = document.getElementById("photo");
+const preview = document.getElementById("preview");
+
+let imageBase64 = "";
+
+/* IMAGE PREVIEW */
+photoInput.addEventListener("change", ()=>{
+const file = photoInput.files[0];
+if(file){
+const reader = new FileReader();
+reader.onload = function(e){
+preview.src = e.target.result;
+preview.style.display="block";
+imageBase64 = e.target.result;
+}
+reader.readAsDataURL(file);
+}
+});
+
+/* SEND PROFILE */
+uploadBtn.onclick = async function(){
+
+const name = document.getElementById("name").value.trim();
+const comment = document.getElementById("comment").value.trim();
+
+if(!name || !comment || !imageBase64){
+alert("Fill all fields!");
+return;
+}
+
+await addDoc(collection(db,"profiles"),{
+name:name,
+comment:comment,
+photo:imageBase64,
+likes:0,
+dislikes:0,
+voters:[],
+created:serverTimestamp()
+});
+
+alert("Profile Uploaded 🔥");
+
+document.getElementById("name").value="";
+document.getElementById("comment").value="";
+photoInput.value="";
+preview.style.display="none";
+imageBase64="";
+};
+
+/* REALTIME LOAD FOR EVERYONE */
+const q = query(collection(db,"profiles"), orderBy("created","desc"));
+
+onSnapshot(q,(snapshot)=>{
+gallery.innerHTML="";
+
+if(snapshot.empty){
+gallery.innerHTML="<h3>No Profiles Yet 😢</h3>";
+return;
+}
+
+snapshot.forEach(docSnap=>{
+const data=docSnap.data();
+
+const card=document.createElement("div");
+card.className="card";
+
+card.innerHTML=`
+<img src="${data.photo}">
+<h3>${data.name}</h3>
+<p>${data.comment}</p>
+<button class="like-btn like">👍 ${data.likes||0}</button>
+<button class="like-btn dislike">👎 ${data.dislikes||0}</button>
+<button class="like-btn delete">🗑 Delete</button>
+`;
+
+card.querySelector("img").onclick=()=> openImage(data.photo);
+card.querySelector(".like").onclick=()=> vote(docSnap.id,"like");
+card.querySelector(".dislike").onclick=()=> vote(docSnap.id,"dislike");
+card.querySelector(".delete").onclick=()=> adminDelete(docSnap.id);
+
+gallery.appendChild(card);
+});
+});
+
+/* VOTE SYSTEM */
+async function vote(id,type){
+const ref=doc(db,"profiles",id);
+const snap=await getDoc(ref);
+if(!snap.exists()) return;
+
+let data=snap.data();
+let voters=data.voters||[];
+
+if(voters.includes(userId)){
+alert("Already voted!");
+return;
+}
+
+let updateData={voters:[...voters,userId]};
+if(type==="like") updateData.likes=increment(1);
+if(type==="dislike") updateData.dislikes=increment(1);
+
+await updateDoc(ref,updateData);
+}
+
+/* ADMIN DELETE */
+async function adminDelete(id){
+
+let pass = prompt("Enter Admin Password:");
+
+if(pass !== "1010"){
+alert("Wrong Password!");
+return;
+}
+
+try{
+await deleteDoc(doc(db,"profiles",id));
+alert("Deleted Successfully ✅");
+}catch(error){
+console.error(error);
+alert("Delete Failed ❌");
+}
+
+}
+
+/* IMAGE MODAL */
+function openImage(src){
+document.getElementById("modal").style.display="flex";
+document.getElementById("modalImg").src=src;
+}
+
+document.getElementById("modal").onclick=function(){
+this.style.display="none";
+}
+
+</script>
+
+</body>
+</html>
