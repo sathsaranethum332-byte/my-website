@@ -412,7 +412,7 @@ h2{
     right:-250px;
     width:200px;
     height:100%;
-    background:linear-gradient(45deg,#0f2027,#8d2de2);
+    background:linear-gradient(45deg,#0f2027,#000000);
     box-shadow:-5px 0 20px black;
     padding:20px;
     transition:0.4s;
@@ -496,6 +496,17 @@ h2{
 <!-- PROFILE SLIDE PANEL -->
 <div class="profile-slide" id="profilePanel">
     <span class="close-icon" onclick="closeProfilePanel()">✖</span>
+
+    <img id="panelPhoto" style="
+        width:80px;
+        height:80px;
+        border-radius:50%;
+        object-fit:cover;
+        border:3px solid cyan;
+        display:block;
+        margin:40px auto 10px;
+        box-shadow: 0 0 20px #00f2ff;
+    ">
 
     <h3 id="panelName"></h3>
     <br>
@@ -805,8 +816,12 @@ window.addEventListener("load",function(){
 
 function openProfilePanel(){
     document.getElementById("profilePanel").style.right="0";
-    document.getElementById("panelName").innerText =
-        localStorage.getItem("userName");
+
+    let name = localStorage.getItem("userName");
+    let photo = localStorage.getItem("userPhoto");
+
+    document.getElementById("panelName").innerText = name;
+    document.getElementById("panelPhoto").src = photo;
 }
 
 function closeProfilePanel(){
