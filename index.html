@@ -840,7 +840,6 @@ function logoutUser(){
 }
 
 </script>
-
 <!-- 🔥 ONLINE USER COUNTER FIREBASE START -->
 
 <!-- Firebase SDK -->
@@ -864,10 +863,20 @@ const database = firebase.database();
 const connectedRef = database.ref(".info/connected");
 const onlineUsersRef = database.ref("onlineUsers");
 
+// Unique ID for this device (one device = one count)
+let userId = localStorage.getItem("onlineUserId");
+
+if (!userId) {
+  userId = Math.random().toString(36).substring(2);
+  localStorage.setItem("onlineUserId", userId);
+}
+
 connectedRef.on("value", (snap) => {
   if (snap.val() === true) {
 
-    const userRef = onlineUsersRef.push(true);
+    const userRef = onlineUsersRef.child(userId);
+
+    userRef.set(true);
 
     userRef.onDisconnect().remove();
   }
@@ -881,5 +890,4 @@ onlineUsersRef.on("value", (snapshot) => {
 <!-- 🔥 ONLINE USER COUNTER FIREBASE END -->
 </body>
 </html>
-
 
