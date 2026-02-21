@@ -10,54 +10,57 @@
 body{
 margin:0;
 font-family:Segoe UI;
-background:#0d0d1a;
+background:linear-gradient(135deg,#0d0d1a,#140033);
 text-align:center;
 color:white;
 min-height:100vh;
 overflow:hidden;
-position:relative;
 }
 
-/* Lightning Background */
-.lightning{
+/* Floating Glow Animation */
+body::before{
+content:"";
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:
-linear-gradient(120deg, transparent 45%, rgba(255,255,255,0.15) 50%, transparent 60%);
-background-size:200% 200%;
-animation:lightMove 4s linear infinite;
-pointer-events:none;
+width:200%;
+height:200%;
+background:radial-gradient(circle,#00aaff22 10%,transparent 60%);
+animation:moveBg 8s linear infinite;
+}
+@keyframes moveBg{
+0%{transform:translate(-20%,-20%)}
+100%{transform:translate(20%,20%)}
 }
 
-@keyframes lightMove{
-0%{background-position:-200% 0;}
-100%{background-position:200% 0;}
+h1{
+margin-top:20px;
+font-size:20px;
+letter-spacing:1px;
+animation:fadeIn 1s ease;
 }
 
-h1{ margin-top:30px;
-font-size: 22px; }
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(-20px)}
+to{opacity:1}
+}
 
-/* ===== Wheel Container ===== */
+/* Wheel Container */
 .wheel-container{
 position:relative;
-width:320px;
-height:320px;
-margin:40px auto;
+width:90vw;
+max-width:320px;
+height:90vw;
+max-height:320px;
+margin:30px auto;
 }
 
-/* ===== Wheel Design ===== */
+/* Wheel */
 .wheel{
 width:100%;
 height:100%;
 border-radius:50%;
-border:8px solid #1a1a80;
-position:relative;
-transition:transform 4s linear;
-background:
-conic-gradient(
+border:6px solid #00aaff;
+transition:transform 4s cubic-bezier(.17,.67,.83,.67);
+background: conic-gradient(
 #1f2937 0deg 45deg,
 #111827 45deg 90deg,
 #1f2937 90deg 135deg,
@@ -67,68 +70,45 @@ conic-gradient(
 #00aaff 270deg 315deg,
 #111827 315deg 360deg
 );
+box-shadow:0 0 25px #00aaff55;
 }
-
-/* Segment Text */
-.segment{
-position:absolute;
-width:100%;
-height:100%;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:13px;
-font-weight:bold;
-text-align:center;
-transform-origin:center;
-pointer-events:none;
-}
-
-/* Rotate each text */
-.s1{ transform:rotate(22.5deg) translateY(-120px) rotate(-22.5deg); }
-.s2{ transform:rotate(67.5deg) translateY(-120px) rotate(-67.5deg); }
-.s3{ transform:rotate(112.5deg) translateY(-120px) rotate(-112.5deg); }
-.s4{ transform:rotate(157.5deg) translateY(-120px) rotate(-157.5deg); }
-.s5{ transform:rotate(202.5deg) translateY(-120px) rotate(-202.5deg); }
-.s6{ transform:rotate(247.5deg) translateY(-120px) rotate(-247.5deg); }
-.s7{ transform:rotate(292.5deg) translateY(-120px) rotate(-292.5deg); }
-.s8{ transform:rotate(337.5deg) translateY(-120px) rotate(-337.5deg); }
 
 /* Pointer */
 .pointer{
 position:absolute;
-top:-15px;
+top:-12px;
 left:50%;
 transform:translateX(-50%);
-width:0;height:0;
-border-left:15px solid transparent;
-border-right:15px solid transparent;
-border-bottom:30px solid gold;
+border-left:12px solid transparent;
+border-right:12px solid transparent;
+border-bottom:25px solid gold;
 z-index:2;
+animation:pulse 1s infinite alternate;
+}
+@keyframes pulse{
+from{transform:translateX(-50%) scale(1)}
+to{transform:translateX(-50%) scale(1.1)}
 }
 
-/* Buttons */
 button{
-padding:10px 20px;
+padding:10px 18px;
 border:1px solid #00aaff;
-border-radius:30px;
+border-radius:25px;
 background:#111;
 color:#00aaff;
 font-weight:bold;
-cursor:pointer;
-margin:10px;
-font-size:16px;
+margin:8px;
+font-size:15px;
 transition:0.3s;
 }
-
 button:hover{
-background:#001f33;
-transform:scale(1.05);
+background:#002244;
+transform:scale(1.08);
 }
 
 #spinInfo{
-margin-top:10px;
-font-size:18px;
+margin-top:8px;
+font-size:16px;
 }
 
 /* Popup */
@@ -138,36 +118,32 @@ position:fixed;
 top:0;left:0;
 width:100%;height:100%;
 background:rgba(0,0,0,0.85);
-z-index:999;
 }
-
 .popup.active{
 display:flex;
 justify-content:center;
 align-items:center;
+animation:fadeIn 0.5s ease;
 }
-
 .box{
 background:#111;
-padding:30px;
-border-radius:20px;
-box-shadow:0 0 20px #003366;
-text-align:center;
+padding:25px;
+border-radius:18px;
+box-shadow:0 0 20px #00aaff55;
 }
 
 .big-win{
-animation:flash 0.5s infinite alternate;
+animation:flash 0.4s infinite alternate;
 }
-
 @keyframes flash{
-from{color:#00ff00;}
-to{color:#ffff00;}
+from{color:#00ff00}
+to{color:#ffff00}
 }
 
 input{
-padding:10px;
+padding:8px;
 margin-top:10px;
-border-radius:10px;
+border-radius:8px;
 border:none;
 width:80%;
 }
@@ -176,28 +152,11 @@ width:80%;
 </head>
 <body>
 
-<div class="lightning"></div>
-
 <h1>🎡 ROLLEX LUCKY SPIN 🎡</h1>
-
-<!-- BACK BUTTON -->
-<button onclick="goBack()">⬅ Back</button>
 
 <div class="wheel-container">
 <div class="pointer"></div>
-
-<div class="wheel" id="wheel">
-
-<div class="segment s1">TRY AGAIN</div>
-<div class="segment s2">TRY AGAIN</div>
-<div class="segment s3">TRY AGAIN</div>
-<div class="segment s4">TRY AGAIN</div>
-<div class="segment s5">TRY AGAIN</div>
-<div class="segment s6">TRY AGAIN</div>
-<div class="segment s7">💎 20 DIAMONDS 💎</div>
-<div class="segment s8">TRY AGAIN</div>
-
-</div>
+<div class="wheel" id="wheel"></div>
 </div>
 
 <button onclick="spin()">SPIN NOW</button>
@@ -220,20 +179,19 @@ width:80%;
 </div>
 </div>
 
+<!-- Sounds -->
+<audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-wheel-spin-1468.mp3"></audio>
+<audio id="loseSound" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
+<audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+
 <script>
 
 let wheel = document.getElementById("wheel");
 let popup = document.getElementById("popup");
-let claimSection = document.getElementById("claimSection");
 let spinInfo = document.getElementById("spinInfo");
 
-let prizes = [
-"Try Again","Try Again","Try Again","Try Again",
-"Try Again","Try Again","GRAND","Try Again"
-];
-
-let selectedPrize = "";
-let maxSpins = 3;
+let prizes = ["TRY","TRY","TRY","TRY","TRY","TRY","WIN","TRY"];
+let maxSpins = 1; // 🔥 Only 1 Spin
 
 function getSpinData(){
 let data = JSON.parse(localStorage.getItem("spinData"));
@@ -247,7 +205,7 @@ return data;
 function updateSpinInfo(){
 let data = getSpinData();
 if(data.spinsLeft > 0){
-spinInfo.innerHTML = "Spins Left Today: " + data.spinsLeft;
+spinInfo.innerHTML = "Spin Available: 1";
 }else{
 startCountdown();
 }
@@ -255,41 +213,37 @@ startCountdown();
 
 function spin(){
 let data = getSpinData();
-
 if(data.spinsLeft <= 0){
-alert("⛔ No spins left!");
+alert("⛔ Spin Not Available!");
 return;
 }
 
 data.spinsLeft--;
-if(data.spinsLeft === 0){
-data.resetTime = Date.now() + (24*60*60*1000);
-}
-
+data.resetTime = Date.now() + (6*60*60*1000); // 🔥 6 Hours Reset
 localStorage.setItem("spinData", JSON.stringify(data));
 updateSpinInfo();
 
-/* SAME SPEED SPIN */
-let randomDegree = 1800 + Math.floor(Math.random()*360);
+document.getElementById("spinSound").play();
 
+let randomDegree = 1800 + Math.floor(Math.random()*360);
 wheel.style.transform = "rotate("+randomDegree+"deg)";
 
 setTimeout(()=>{
-
 let actualDegree = randomDegree % 360;
 let index = Math.floor((360 - actualDegree) / 45) % 8;
-selectedPrize = prizes[index];
+let selectedPrize = prizes[index];
 
-if(selectedPrize==="GRAND"){
+if(selectedPrize==="WIN"){
 document.getElementById("resultTitle").innerHTML="🎉 BIG WINNER 🎉";
 document.getElementById("resultTitle").classList.add("big-win");
-document.getElementById("resultText").innerHTML=
-"You Won 💎 20 Diamonds 💎";
-claimSection.style.display="block";
+document.getElementById("resultText").innerHTML= "You Won 💎 20 Diamonds 💎";
+document.getElementById("winSound").play();
+document.getElementById("claimSection").style.display="block";
 }else{
 document.getElementById("resultTitle").innerHTML="😢 Try Again";
 document.getElementById("resultText").innerHTML="Better Luck Next Time!";
-claimSection.style.display="none";
+document.getElementById("loseSound").play();
+document.getElementById("claimSection").style.display="none";
 }
 
 popup.classList.add("active");
@@ -298,26 +252,19 @@ popup.classList.add("active");
 }
 
 function startCountdown(){
-let data = getSpinData();
-
 let interval = setInterval(()=>{
-let now = Date.now();
-let diff = data.resetTime - now;
-
+let data = getSpinData();
+let diff = data.resetTime - Date.now();
 if(diff <= 0){
-clearInterval(interval);
 localStorage.removeItem("spinData");
+clearInterval(interval);
 updateSpinInfo();
 return;
 }
-
-let hours = Math.floor(diff/1000/60/60);
-let minutes = Math.floor((diff/1000/60)%60);
-let seconds = Math.floor((diff/1000)%60);
-
-spinInfo.innerHTML =
-"⏳ Reset In: " + hours+"h "+minutes+"m "+seconds+"s";
-
+let h = Math.floor(diff/1000/60/60);
+let m = Math.floor((diff/1000/60)%60);
+let s = Math.floor((diff/1000)%60);
+spinInfo.innerHTML = "⏳ Reset In: "+h+"h "+m+"m "+s+"s";
 },1000);
 }
 
@@ -325,25 +272,13 @@ function send(){
 let gameId = document.getElementById("gameId").value;
 if(gameId==""){ alert("Enter Game ID"); return; }
 
-let message =
-"🎉 Lucky Spin Winner!\n\nPrize: 💎 20 Diamonds 💎"+
-"\nGame ID: "+gameId;
-
-window.open(
-"https://wa.me/94756706560?text="+
-encodeURIComponent(message),
-"_blank"
-);
+let message = "🎉 Lucky Spin Winner!\nPrize: 💎 20 Diamonds 💎\nGame ID: "+gameId;
+window.open("https://wa.me/94756706560?text="+encodeURIComponent(message),"_blank");
 }
 
 function closePopup(){
 popup.classList.remove("active");
 document.getElementById("gameId").value="";
-}
-
-/* BACK BUTTON FUNCTION */
-function goBack(){
-window.location.href = "giveawy.html";
 }
 
 updateSpinInfo();
@@ -352,4 +287,3 @@ updateSpinInfo();
 
 </body>
 </html>
-
