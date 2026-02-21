@@ -110,7 +110,7 @@ header{
     backdrop-filter:blur(15px);
     padding:25px;
     margin: 20px auto;
-    width:300px;
+    width:90%;
     border-radius:20px;
     box-shadow:0 0 30px rgb(0, 0, 0);
     cursor:pointer;
@@ -147,6 +147,7 @@ select,input{
             position: relative;
             width: 100%;
             height: 400px;
+         
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -326,10 +327,157 @@ h2{
     background: #090000;
  }
 
+ /* ===== PROFILE HEADER ===== */
+
+.profile-area{
+    position:absolute;
+    left:10px;
+    top:px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.profile-area img{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid cyan;
+}
+
+.profile-area span{
+    font-weight:bold;
+    font-size:14px;
+}
+
+.profile-tab{
+    margin-left:10px;
+    background:#000;
+    padding:5px 10px;
+    border-radius:15px;
+    font-size:12px;
+}
+
+#loginScreen{
+    position:fixed;
+    width:100%;
+    height:100vh;
+    background:linear-gradient(45deg,#000000,#11006f);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999999;
+}
+
+.login-box{
+    background:rgba(0,0,0,0.7);
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 0 30px cyan;
+    text-align:center;
+}
+
+.login-box input{
+    width:90%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:10px;
+    border:none;
+}
+
+.login-box img{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:10px;
+    display:none;
+}
+
+.locked{
+    pointer-events:none;
+    opacity:0.5;
+}
+/* ===== PROFILE SLIDE PANEL ===== */
+
+.profile-wrapper{
+    position:relative;
+    cursor:pointer;
+}
+
+.profile-slide{
+    position:fixed;
+    top:0;
+    right:-250px;
+    width:200px;
+    height:100%;
+    background:linear-gradient(45deg,#0f2027,#8d2de2);
+    box-shadow:-5px 0 20px black;
+    padding:20px;
+    transition:0.4s;
+    z-index:100000;
+}
+
+.profile-slide h3{
+    margin-top:50px;
+    font-size:16px;
+}
+
+.profile-slide button{
+    background:linear-gradient(45deg,#00f2ff,#8e2de2);
+    padding:8px 15px;
+    border:none;
+    border-radius:10px;
+    color:white;
+    cursor:pointer;
+    animation:none;
+}
+
+
+/* Close Icon */
+.profile-slide .close-icon{
+    position:absolute;
+    top:15px;
+    right:15px;
+    font-size:20px;
+    cursor:pointer;
+    color:white;
+}
+
+.lt{
+    font-weight: 900;
+    font-size: 22px;
+}
+
+#panelName {
+    color: #ff0000;
+    font-weight: 900;
+    background: #00e5ff;
+    box-shadow: 0 0 10px #00fffb;
+    border:2px solid rgb(0, 0, 0);
+    border-radius: 20px;
+}
+.v{
+    font-size: 10px;
+}
 </style>
 </head>
 
 <body>
+
+    <!-- LOGIN SCREEN -->
+<div id="loginScreen">
+    <div class="login-box">
+        <h2>🔐 Login First</h2>
+        <img id="preview">
+        <input type="text" id="loginName" placeholder="Enter Your Name">
+        <br>
+        <p>ADD PROFILE PHOTO</p><BR>
+        <input type="file" id="loginPhoto" accept="image/*">
+        <button onclick="loginUser()">Login</button>
+    </div>
+</div>
 
 <!-- Splash Screen -->
 <div id="splashScreen">
@@ -339,7 +487,24 @@ h2{
 
 <!-- ===== ORIGINAL WEBSITE START ===== -->
 
-<header>⚡ ROLLEX GAMING TOPUP ⚡
+<header>
+    <div class="profile-area hidden profile-wrapper" id="profileArea" onclick="openProfilePanel()">
+    <img id="headerPhoto">
+    <span id="headerName"></span>
+</div>
+
+<!-- PROFILE SLIDE PANEL -->
+<div class="profile-slide" id="profilePanel">
+    <span class="close-icon" onclick="closeProfilePanel()">✖</span>
+
+    <h3 id="panelName"></h3>
+    <br>
+
+    <div class="v">Signing out deletes all web data for security. 🗑️🔒</div>
+   
+    <button onclick="logoutUser()">Sign Out</button>
+</div>
+</div>
     <span class="menu-btn" onclick="openMenu()">☰</span>
 </header>
 
@@ -375,6 +540,7 @@ h2{
 <div class="container" id="home">
 
 
+<div class="lt">⚡ ROLLEX GAMING TOPUP ⚡</div>
 
 <div class="banner">
     <img src="baner2.png.jpeg" class="active">
@@ -500,7 +666,7 @@ setInterval(changeSlide2, 5000);
 window.addEventListener("load",function(){
     setTimeout(function(){
         document.getElementById("splashScreen").style.display="none";
-    },4000);
+    },000);
 });
 
 /* ===== Your Original JS ===== */
@@ -564,8 +730,112 @@ function sendOrder(){
     window.open("https://wa.me/94741962754?text="+message,"_blank");
 }
 
+/* ===== LOGIN + PROFILE SYSTEM ===== */
+
+function lockWebsite(){
+    document.querySelectorAll(".card, button").forEach(el=>{
+        if(!el.closest("#loginScreen")){
+            el.classList.add("locked");
+        }
+    });
+}
+
+function unlockWebsite(){
+    document.querySelectorAll(".card, button").forEach(el=>{
+        el.classList.remove("locked");
+    });
+}
+
+document.getElementById("loginPhoto").addEventListener("change",function(){
+    let reader=new FileReader();
+    reader.onload=function(e){
+        let img=document.getElementById("preview");
+        img.src=e.target.result;
+        img.style.display="block";
+    }
+    reader.readAsDataURL(this.files[0]);
+});
+
+function loginUser(){
+    let name=document.getElementById("loginName").value;
+    let photo=document.getElementById("loginPhoto").files[0];
+
+    if(!name || !photo){
+        alert("Enter Name & Profile Photo!");
+        return;
+    }
+
+    let reader=new FileReader();
+    reader.onload=function(e){
+        localStorage.setItem("userName",name);
+        localStorage.setItem("userPhoto",e.target.result);
+        showProfile();
+        unlockWebsite();
+        document.getElementById("loginScreen").style.display="none";
+    }
+    reader.readAsDataURL(photo);
+}
+
+function showProfile(){
+    let name=localStorage.getItem("userName");
+    let photo=localStorage.getItem("userPhoto");
+
+    if(name && photo){
+        document.getElementById("headerName").innerText=name;
+        document.getElementById("headerPhoto").src=photo;
+        document.getElementById("profileArea").classList.remove("hidden");
+    }
+}
+
+/* Auto Login Check */
+window.addEventListener("load",function(){
+    lockWebsite();
+
+    if(localStorage.getItem("userName") && localStorage.getItem("userPhoto")){
+        showProfile();
+        unlockWebsite();
+        document.getElementById("loginScreen").style.display="none";
+    }else{
+        document.getElementById("loginScreen").style.display="flex";
+    }
+});
+
+
+/* ===== PROFILE SLIDE SYSTEM ===== */
+
+function openProfilePanel(){
+    document.getElementById("profilePanel").style.right="0";
+    document.getElementById("panelName").innerText =
+        localStorage.getItem("userName");
+}
+
+function closeProfilePanel(){
+    document.getElementById("profilePanel").style.right="-250px";
+}
+
+/* Close when clicking outside */
+window.addEventListener("click",function(e){
+    let panel=document.getElementById("profilePanel");
+    let profile=document.getElementById("profileArea");
+
+    if(!panel.contains(e.target) && !profile.contains(e.target)){
+        panel.style.right="-250px";
+    }
+});
+
+/* Logout */
+function logoutUser(){
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userPhoto");
+
+    document.getElementById("profilePanel").style.right="-250px";
+    document.getElementById("profileArea").classList.add("hidden");
+    document.getElementById("loginScreen").style.display="flex";
+
+    lockWebsite();
+}
+
 </script>
 
 </body>
 </html>
-
