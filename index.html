@@ -510,7 +510,7 @@ h2{
 </header>
 
 <div style="position:absolute; right:70px; top:25px; font-size:14px;">
-🔴 Online: <span id="onlineCount">0</span>
+ 🔴 Online: <span id="onlineCount">0</span>
 </div>
 <!-- (මෙතනින් පස්සේ ඔයාගේ original HTML content එක unchanged) -->
 
@@ -877,8 +877,223 @@ onlineUsersRef.on("value", (snapshot) => {
   const count = snapshot.numChildren();
   document.getElementById("onlineCount").innerText = count;
 });
+
+<script>
+
+let currentUserId = null;
+let chattingWith = null;
+
+/* ===== Save Online User Info ===== */
+
+window.addEventListener("load",function(){
+
+if(localStorage.getItem("userName")){
+
+    const userRef = onlineUsersRef.push({
+        name: localStorage.getItem("userName"),
+        photo: localStorage.getItem("userPhoto")
+    });
+
+    currentUserId = userRef.key;
+
+    userRef.onDisconnect().remove();
+}
+});
+
+
+/* ===== Load Online Users ===== */
+
+onlineUsersRef.on("value", snapshot=>{
+    let html="";
+    snapshot.forEach(child=>{
+        if(child.key !== currentUserId){
+
+            let user = child.val();
+
+            html += `
+            <div onclick="startPrivateChat('${child.key}','${user.name}','${user.photo}')"
+            style="display:flex;align-items:center;cursor:pointer;margin:5px 0;">
+            <img src="${user.photo}" width="35" height="35"
+            style="border-radius:50%;margin-right:8px;">
+            <span>${user.name}</span>
+            </div>
+            `;
+        }
+    });
+
+    document.getElementById("onlineUsersList").innerHTML = html;
+});
+
+
+/* ===== Open Chat List ===== */
+
+function openChatList(){
+    let list = document.getElementById("chatList");
+    list.style.right = list.style.right === "0px" ? "-300px" : "0";
+}
+
+
+/* ===== Start Private Chat ===== */
+
+function startPrivateChat(userId,name,photo){
+
+    chattingWith = userId;
+
+    document.getElementById("privateChatBox").style.right="0";
+    document.getElementById("chatWithName").innerText=name;
+
+    loadMessages();
+}
+
+
+/* ===== Close Chat ===== */
+
+function closePrivateChat(){
+    document.getElementById("privateChatBox").style.right="-400px";
+}
+
+
+/* ===== Send Private Message ===== */
+
+function sendPrivateMessage(){
+
+let text = document.getElementById("chatInput").value;
+if(!text) return;
+
+let chatId = [currentUserId, chattingWith].sort().join("_");
+
+database.ref("privateChats/"+chatId).push({
+    sender: currentUserId,
+    receiver: chattingWith,
+    text: text,
+    timestamp: Date.now()
+});
+
+document.getElementById("chatInput").value="";
+}
+
+
+/* ===== Load Messages ===== */
+
+function loadMessages(){
+
+let chatId = [currentUserId, chattingWith].sort().join("_");
+
+database.ref("privateChats/"+chatId)
+.orderByChild("timestamp")
+.limitToLast(50)
+.on("value", snapshot=>{
+
+    let html="";
+
+    snapshot.forEach(msg=>{
+        let m = msg.val();
+
+        html += `
+        <div style="margin:5px;
+        text-align:${m.sender===currentUserId?"right":"left"};">
+        <span style="
+        background:${m.sender===currentUserId?"#00e5ff":"#444"};
+        padding:8px;border-radius:10px;
+        display:inline-block;">
+        ${m.text}
+        </span>
+        </div>
+        `;
+    });
+
+    document.getElementById("chatMessages").innerHTML=html;
+});
+}
+
+
+/* ===== Auto Delete Old Messages (1 Hour) ===== */
+
+setInterval(()=>{
+    database.ref("privateChats").once("value",snapshot=>{
+        snapshot.forEach(chat=>{
+            chat.forEach(msg=>{
+                if(Date.now()-msg.val().timestamp > 3600000){
+                    msg.ref.remove();
+                }
+            });
+        });
+    });
+},600000); // check every 10 mins
+
+
+/* ===== Notification ===== */
+
+database.ref("privateChats").on("child_added", snapshot=>{
+
+snapshot.forEach(msg=>{
+    let m = msg.val();
+
+    if(m.receiver === currentUserId){
+        alert("🔔 New Message!");
+    }
+});
+
+});
+
+</script>
 </script>
 <!-- 🔥 ONLINE USER COUNTER FIREBASE END -->
+<!-- ===== LIVE CHAT BUTTON ===== -->
+<div id="chatBtn" onclick="openChatList()" 
+style="position:fixed;bottom:20px;right:20px;
+background:#00e5ff;color:black;
+padding:15px;border-radius:50%;
+cursor:pointer;font-weight:bold;">
+💬
+</div>
+
+<!-- ===== ONLINE USERS LIST ===== -->
+<div id="chatList" style="
+position:fixed;
+bottom:80px;
+right:-300px;
+width:250px;
+height:300px;
+background:#111;
+color:white;
+overflow:auto;
+transition:0.4s;
+padding:10px;
+border-radius:15px;
+">
+<h4>Online Members</h4>
+<div id="onlineUsersList"></div>
+</div>
+
+<!-- ===== PRIVATE CHAT BOX ===== -->
+<div id="privateChatBox" style="
+position:fixed;
+bottom:0;
+right:-400px;
+width:300px;
+height:400px;
+background:#000;
+transition:0.4s;
+display:flex;
+flex-direction:column;
+">
+
+<div style="background:#00e5ff;color:black;padding:10px;">
+<span id="chatWithName"></span>
+<span onclick="closePrivateChat()" style="float:right;cursor:pointer;">✖</span>
+</div>
+
+<div id="chatMessages" style="flex:1;overflow:auto;padding:10px;"></div>
+
+<div style="display:flex;">
+<input type="text" id="chatInput" placeholder="Type message..."
+style="flex:1;padding:8px;">
+<button onclick="sendPrivateMessage()">Send</button>
+</div>
+
+</div>
+
+
 </body>
 </html>
-
