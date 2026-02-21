@@ -194,11 +194,16 @@ font-size:18px;
 <div class="container">
 
     <div class="card">
-        <h2>🎡 Lucky Spin</h2>
+        <h2>🎡 LUCKY SPIN</h2>
         <p>Spin 3 times per day & win free diamonds!</p>
         <button class="btn" onclick="startLoading()">Play Now</button>
     </div>
 
+       <div class="card">
+        <h2>🎡 LUCKY TAP</h2>
+        <p>The one who like the most wins.!</p>
+        <button class="btn" onclick="startLoading1()">upload</button>
+    </div>
    
 </div>
 <!-- LOADING SCREEN -->
@@ -214,6 +219,14 @@ function startLoading(){
 
     setTimeout(()=>{
         window.location.href="luckyspin.html";
+    },2500);
+}
+
+function startLoading1(){
+    document.getElementById("loader").classList.add("active");
+
+    setTimeout(()=>{
+        window.location.href="gamingwall.html";
     },2500);
 }
 
