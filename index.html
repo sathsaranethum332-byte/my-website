@@ -7,6 +7,12 @@
 <link rel="icon" type="image/png" href="logo.png">
 
 <style>
+    body{
+    margin:0;
+    font-family:'Orbitron', sans-serif;
+     
+    animation:gradientBG 10s ease infinite;
+}
 
 /* ===== Splash Screen ===== */
 
@@ -53,6 +59,7 @@ body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
     color:white;
+    
     text-align:center;background: #0d003a;
     background-size:400% 400%;
     animation:gradientBG 8s ease infinite;
@@ -96,6 +103,8 @@ header{
     letter-spacing:2px;
     background:rgba(0, 0, 0, 0.4);
     box-shadow:0 0 30px #00e5ff;
+
+    border-bottom:2px solid #00f2ff;
     animation:fadeIn 1.5s ease;
 }
 
@@ -106,7 +115,7 @@ header{
 
 /* Card Animation */
 .card{
-     background:#1a0061;
+    background: rgba(255,255,255,0.05);
     backdrop-filter:blur(15px);
     padding:25px;
     margin: 20px auto;
@@ -115,7 +124,7 @@ header{
     box-shadow:0 0 10px #00fffb;
     cursor:pointer;
     transition:0.3s;
-    border: none;
+    background: rgba(255,255,255,0.05);
     animation:floatCard 2s ease-in-out infinite;
 }
 
@@ -200,14 +209,9 @@ button{
     font-weight:bold;
     cursor:pointer;
     transition:0.3s;
-    animation:pulse 2s infinite;
 }
 
-@keyframes pulse{
-    0%{box-shadow:0 0 10px cyan;}
-    50%{box-shadow:0 0 25px #ffffff;}
-    100%{box-shadow:0 0 10px cyan;}
-}
+
 
 button:hover{
     transform:scale(1.1);
@@ -292,13 +296,15 @@ l{
     color:#ffffff;
     font-weight: 00;
     text-shadow:0 0 11px rgb(0, 0, 0);
+    animation:priceGlow 2s infinite alternate;
+
+
 }
 
-@keyframes fadeIn{
-    from{opacity:0; transform:translateY(20px);}
-    to{opacity:1; transform:translateY(0);}
+@keyframes priceGlow{
+    from{ text-shadow:0 0 10px #00ffcc; }
+    to{ text-shadow:0 0 25px #00ffcc; }
 }
-
 h2{
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-weight: 900;
@@ -365,7 +371,11 @@ h2{
 }
 
 .login-box{
-    background:rgba(0,0,0,0.7);
+    background: rgba(255,255,255,0.05);
+
+    width: 70%;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(25px);
     padding:30px;
     border-radius:20px;
     box-shadow:0 0 30px cyan;
@@ -550,23 +560,8 @@ h2{
 <div class="banner">
     <img src="baner2.png.jpeg" class="active">
     <img src="baner1.jpeg">
-
-   <div id="onlineBox" style="
-position:absolute;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-background:rgba(0,0,0,0.6);
-padding:8px 20px;
-border-radius:20px;
-font-weight:bold;
-box-shadow:0 0 10px cyan;">
-🟢 Online Members: <span id="onlineCount">0</span>
-</div>
     
 </div>
-
-
 
 
 <div class="card" onclick="loadGame('FREE FIRE')">
@@ -684,7 +679,7 @@ setInterval(changeSlide2, 5000);
 window.addEventListener("load",function(){
     setTimeout(function(){
         document.getElementById("splashScreen").style.display="none";
-    },5000);
+    },4000);
 });
 
 /* ===== Your Original JS ===== */
@@ -857,42 +852,7 @@ function logoutUser(){
     lockWebsite();
 }
 
-
 </script>
-<script>
-
-/* ===== ONLINE USERS SYSTEM ===== */
-
-var userRef = database.ref("onlineUsers").push();
-userRef.set(true);
-
-// Auto remove when user leaves
-userRef.onDisconnect().remove();
-
-// Realtime count
-database.ref("onlineUsers").on("value", function(snapshot){
-    document.getElementById("onlineCount").innerText = snapshot.numChildren();
-});
-
-var firebaseConfig = {
-  apiKey: "AIzaSyBrxqLz7WkZxcV4bAGVnQBHBMUsJghyrsU",
-  authDomain: "count-1d259.firebaseapp.com",
-  databaseURL: "https://count-1d259-default-rtdb.firebaseio.com",
-  projectId: "count-1d259",
-  storageBucket: "count-1d259.firebasestorage.app",
-  messagingSenderId: "185499926971",
-  appId: "1:185499926971:web:5e14f47e05293f0ef7449e",
-  measurementId: "G-9KC88P42MN"
-};
-
-firebase.initializeApp(firebaseConfig);
-var database = firebase.database();
-
-</script>
-
-<!-- Firebase v8 -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 </body>
 </html>
