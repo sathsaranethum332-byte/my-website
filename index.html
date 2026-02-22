@@ -95,7 +95,7 @@ header{
     font-weight:bold;
     letter-spacing:2px;
     background:rgba(0, 0, 0, 0.4);
-    box-shadow:0 0 30px #000000;
+    box-shadow:0 0 30px #00e5ff;
     animation:fadeIn 1.5s ease;
 }
 
@@ -106,30 +106,24 @@ header{
 
 /* Card Animation */
 .card{
-     background:linear-gradient(45deg,#00fffb,#542de2);
+     background:#1a0061;
     backdrop-filter:blur(15px);
     padding:25px;
     margin: 20px auto;
     width:90%;
     border-radius:20px;
-    box-shadow:0 0 30px rgb(0, 0, 0);
+    box-shadow:0 0 10px #00fffb;
     cursor:pointer;
     transition:0.3s;
     border: none;
     animation:floatCard 2s ease-in-out infinite;
 }
 
-@keyframes floatCard{
-    0%{transform:translateY(0px);}
-    50%{transform:translateY(-10px);}
-    100%{transform:translateY(0px);}
-    
-}
 
 
 .card:hover{
-    transform:scale(1.08);
-    box-shadow:0 0 45px #00e5ff;
+    transform:scale(1.02);
+    box-shadow:0 0 30px #00e5ff;
 }
 
 select,input{
@@ -556,8 +550,23 @@ h2{
 <div class="banner">
     <img src="baner2.png.jpeg" class="active">
     <img src="baner1.jpeg">
+
+   <div id="onlineBox" style="
+position:absolute;
+bottom:10px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,0,0,0.6);
+padding:8px 20px;
+border-radius:20px;
+font-weight:bold;
+box-shadow:0 0 10px cyan;">
+🟢 Online Members: <span id="onlineCount">0</span>
+</div>
     
 </div>
+
+
 
 
 <div class="card" onclick="loadGame('FREE FIRE')">
@@ -568,9 +577,7 @@ h2{
 🔥 PUBG 💎
 </div>
 
-<div class="card" onclick="loadGame('CALL OF DUTY ')">
-🔥 CALL OF DUTY 💎
-</div>
+
 
 </div>
 
@@ -677,7 +684,7 @@ setInterval(changeSlide2, 5000);
 window.addEventListener("load",function(){
     setTimeout(function(){
         document.getElementById("splashScreen").style.display="none";
-    },000);
+    },5000);
 });
 
 /* ===== Your Original JS ===== */
@@ -850,7 +857,42 @@ function logoutUser(){
     lockWebsite();
 }
 
+
 </script>
+<script>
+
+/* ===== ONLINE USERS SYSTEM ===== */
+
+var userRef = database.ref("onlineUsers").push();
+userRef.set(true);
+
+// Auto remove when user leaves
+userRef.onDisconnect().remove();
+
+// Realtime count
+database.ref("onlineUsers").on("value", function(snapshot){
+    document.getElementById("onlineCount").innerText = snapshot.numChildren();
+});
+
+var firebaseConfig = {
+  apiKey: "AIzaSyBrxqLz7WkZxcV4bAGVnQBHBMUsJghyrsU",
+  authDomain: "count-1d259.firebaseapp.com",
+  databaseURL: "https://count-1d259-default-rtdb.firebaseio.com",
+  projectId: "count-1d259",
+  storageBucket: "count-1d259.firebasestorage.app",
+  messagingSenderId: "185499926971",
+  appId: "1:185499926971:web:5e14f47e05293f0ef7449e",
+  measurementId: "G-9KC88P42MN"
+};
+
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
+
+</script>
+
+<!-- Firebase v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 </body>
 </html>
