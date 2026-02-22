@@ -162,9 +162,9 @@ width:80%;
 <div class="wheel" id="wheel"></div>
 </div>
 
-<button onclick="spin()">SPIN NOW</button>
 <BR>
-    
+    <h1> ⛔SPIN EVENT END⛔</h1>
+   
 <div id="spinInfo"></div>
 <BR>
     <a href="giveawy.html"><button CLASS="BB">BACK</button></a>
@@ -185,111 +185,6 @@ width:80%;
 </div>
 </div>
 
-<!-- Sounds -->
-<audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-wheel-spin-1468.mp3"></audio>
-<audio id="loseSound" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
-<audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
-
-<script>
-
-let wheel = document.getElementById("wheel");
-let popup = document.getElementById("popup");
-let spinInfo = document.getElementById("spinInfo");
-
-let prizes = ["TRY","TRY","TRY","TRY","TRY","TRY","WIN","TRY"];
-let maxSpins = 1; // 🔥 Only 1 Spin
-
-function getSpinData(){
-let data = JSON.parse(localStorage.getItem("spinData"));
-if(!data){
-data = { spinsLeft: maxSpins, resetTime: null };
-localStorage.setItem("spinData", JSON.stringify(data));
-}
-return data;
-}
-
-function updateSpinInfo(){
-let data = getSpinData();
-if(data.spinsLeft > 0){
-spinInfo.innerHTML = "Spin Available: 1";
-}else{
-startCountdown();
-}
-}
-
-function spin(){
-let data = getSpinData();
-if(data.spinsLeft <= 0){
-alert("⛔ Spin Not Available!");
-return;
-}
-
-data.spinsLeft--;
-data.resetTime = Date.now() + (6*60*60*1000); // 🔥 6 Hours Reset
-localStorage.setItem("spinData", JSON.stringify(data));
-updateSpinInfo();
-
-document.getElementById("spinSound").play();
-
-let randomDegree = 1800 + Math.floor(Math.random()*360);
-wheel.style.transform = "rotate("+randomDegree+"deg)";
-
-setTimeout(()=>{
-let actualDegree = randomDegree % 360;
-let index = Math.floor((360 - actualDegree) / 45) % 8;
-let selectedPrize = prizes[index];
-
-if(selectedPrize==="WIN"){
-document.getElementById("resultTitle").innerHTML="🎉 BIG WINNER 🎉";
-document.getElementById("resultTitle").classList.add("big-win");
-document.getElementById("resultText").innerHTML= "You Won 💎 20 Diamonds 💎";
-document.getElementById("winSound").play();
-document.getElementById("claimSection").style.display="block";
-}else{
-document.getElementById("resultTitle").innerHTML="😢 Try Again";
-document.getElementById("resultText").innerHTML="Better Luck Next Time!";
-document.getElementById("loseSound").play();
-document.getElementById("claimSection").style.display="none";
-}
-
-popup.classList.add("active");
-
-},4000);
-}
-
-function startCountdown(){
-let interval = setInterval(()=>{
-let data = getSpinData();
-let diff = data.resetTime - Date.now();
-if(diff <= 0){
-localStorage.removeItem("spinData");
-clearInterval(interval);
-updateSpinInfo();
-return;
-}
-let h = Math.floor(diff/1000/60/60);
-let m = Math.floor((diff/1000/60)%60);
-let s = Math.floor((diff/1000)%60);
-spinInfo.innerHTML = "⏳ Reset In: "+h+"h "+m+"m "+s+"s";
-},1000);
-}
-
-function send(){
-let gameId = document.getElementById("gameId").value;
-if(gameId==""){ alert("Enter Game ID"); return; }
-
-let message = "🎉 Lucky Spin Winner!\nPrize: 💎 20 Diamonds 💎\nGame ID: "+gameId;
-window.open("https://wa.me/94756706560?text="+encodeURIComponent(message),"_blank");
-}
-
-function closePopup(){
-popup.classList.remove("active");
-document.getElementById("gameId").value="";
-}
-
-updateSpinInfo();
-
-</script>
 
 </body>
 </html>
