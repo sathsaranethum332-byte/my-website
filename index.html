@@ -633,6 +633,19 @@ h2{
     box-shadow:0 0 25px cyan;
   background:linear-gradient(45deg,#240176,#8f00ff);
 }
+   
+.ad-container{
+  width:100%;
+  max-width:320px;   /* mobile width */
+  margin:10px auto;
+  text-align:center;
+}
+
+.ad-container iframe{
+  width:100% !important;
+  height:auto !important;
+}
+
 </style>
 
 
@@ -719,16 +732,19 @@ h2{
 
 <div class="lt">⚡ ROLLEX GAMING TOPUP ⚡</div>
 
-<script>
-  atOptions = {
-    'key' : '5e45ca773a06e8211b24520789a59f52',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 250,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/5e45ca773a06e8211b24520789a59f52/invoke.js"></script>
+<div class="ad-container">
+  <script>
+    atOptions = {
+      'key' : '5e45ca773a06e8211b24520789a59f52',
+      'format' : 'iframe',
+      'height' : 90,
+      'width' : 250,
+      'params' : {}
+    };
+  </script>
+  <script src="https://www.highperformanceformat.com/5e45ca773a06e8211b24520789a59f52/invoke.js"></script>
+</div>
+
 
 <div class="banner">
     <img src="baner2.png.jpeg" class="active">
@@ -1231,6 +1247,7 @@ onlineUsersRef.on("value", (snapshot) => {
 <!-- 🔥 ONLINE USER COUNTER FIREBASE END -->
 </body>
 </html>
+
 
 
 
