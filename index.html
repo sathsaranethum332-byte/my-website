@@ -3,16 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROLLEX GAMING TOPUP </title>
+<title>ROLLEX STORE </title>
 <link rel="icon" type="image/png" href="logo.png">
 
 <style>
-    body{
-    margin:0;
-    font-family:'Orbitron', sans-serif;
-     
-    animation:gradientBG 10s ease infinite;
-}
 
 /* ===== Splash Screen ===== */
 
@@ -59,7 +53,6 @@ body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
     color:white;
-    
     text-align:center;background: #0d003a;
     background-size:400% 400%;
     animation:gradientBG 8s ease infinite;
@@ -102,9 +95,7 @@ header{
     font-weight:bold;
     letter-spacing:2px;
     background:rgba(0, 0, 0, 0.4);
-    box-shadow:0 0 30px #00e5ff;
-
-    border-bottom:2px solid #00f2ff;
+    box-shadow:0 0 30px #000000;
     animation:fadeIn 1.5s ease;
 }
 
@@ -115,24 +106,36 @@ header{
 
 /* Card Animation */
 .card{
-    background: rgba(255,255,255,0.05);
+     background: #1b0277;
     backdrop-filter:blur(15px);
-    padding:25px;
+    padding:20px;
     margin: 20px auto;
     width:90%;
+    text-align: center;
+    font-weight: 900;
+    font-size: large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-style: oblique;
+    height: 50px;
     border-radius:20px;
-    box-shadow:0 0 10px #00fffb;
+    box-shadow:0 0 30px rgb(0, 255, 221);
     cursor:pointer;
     transition:0.3s;
-    background: rgba(255,255,255,0.05);
+    border: none;
     animation:floatCard 2s ease-in-out infinite;
 }
 
+@keyframes floatCard{
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(-10px);}
+    100%{transform:translateY(0px);}
+    
+}
 
 
 .card:hover{
-    transform:scale(1.02);
-    box-shadow:0 0 30px #00e5ff;
+    transform:scale(1.08);
+    box-shadow:0 0 45px #00e5ff;
 }
 
 select,input{
@@ -204,14 +207,19 @@ button{
     padding:12px 25px;
     border:none;
     border-radius:25px;
-    background:linear-gradient(45deg,#00f2ff,#8e2de2);
+    background:linear-gradient(45deg,#120053,#000000);
     color:white;
     font-weight:bold;
     cursor:pointer;
     transition:0.3s;
+    animation:pulse 2s infinite;
 }
 
-
+@keyframes pulse{
+    0%{box-shadow:0 0 10px cyan;}
+    50%{box-shadow:0 0 25px #ffffff;}
+    100%{box-shadow:0 0 10px cyan;}
+}
 
 button:hover{
     transform:scale(1.1);
@@ -296,15 +304,13 @@ l{
     color:#ffffff;
     font-weight: 00;
     text-shadow:0 0 11px rgb(0, 0, 0);
-    animation:priceGlow 2s infinite alternate;
-
-
 }
 
-@keyframes priceGlow{
-    from{ text-shadow:0 0 10px #00ffcc; }
-    to{ text-shadow:0 0 25px #00ffcc; }
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
 }
+
 h2{
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-weight: 900;
@@ -351,6 +357,7 @@ h2{
     font-size:14px;
 }
 
+
 .profile-tab{
     margin-left:10px;
     background:#000;
@@ -363,7 +370,7 @@ h2{
     position:fixed;
     width:100%;
     height:100vh;
-    background:linear-gradient(45deg,#000000,#11006f);
+    background:linear-gradient(45deg,#000000e2,#09003ee2);
     display:flex;
     justify-content:center;
     align-items:center;
@@ -371,11 +378,8 @@ h2{
 }
 
 .login-box{
-    background: rgba(255,255,255,0.05);
-
     width: 70%;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(25px);
+    background:rgb(10, 1, 51);
     padding:30px;
     border-radius:20px;
     box-shadow:0 0 30px cyan;
@@ -416,7 +420,7 @@ h2{
     right:-250px;
     width:200px;
     height:100%;
-    background:linear-gradient(45deg,#0f2027,#000000);
+    background:linear-gradient(45deg,#0f2027,#8d2de2);
     box-shadow:-5px 0 20px black;
     padding:20px;
     transition:0.4s;
@@ -465,7 +469,173 @@ h2{
 .v{
     font-size: 10px;
 }
+
+.diamond-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+}
+
+.diamond-card{
+  background:linear-gradient(45deg,#240176,#8f00ff);
+  padding:0px;
+  border-radius:15px;
+  text-align:center;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.diamond-card:hover{
+  transform:scale(1.05);
+}
+
+.diamond-card.active{
+  border:5px solid #00f0ff;
+}
+
+.diamond-c{
+    margin-top: 20px;
+    border-radius:z ;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    height: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-style: oblique;
+    font-weight: 900;
+    font-size: large;
+}
+
+.server-title{
+    margin-top:20px;
+    font-weight:900;
+    font-size:18px;
+    text-shadow:0 0 10px cyan;
+}
+
+.server-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
+    margin-top:15px;
+}
+
+.server-card{
+    padding:12px;
+    background:linear-gradient(45deg,#000428,#004e92);
+    border-radius:12px;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 10px #00e5ff;
+    font-weight:bold;
+}
+
+.server-card:hover{
+    transform:scale(1.05);
+}
+
+.server-card.active{
+    border:3px solid #00f0ff;
+  background:linear-gradient(45deg,#240176,#8f00ff);
+}
+
+.server-title{
+    margin-top:20px;
+    font-weight:900;
+    font-size:20px;
+    text-shadow:0 0 15px cyan;
+}
+
+.server-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:15px;
+    margin-top:15px;
+}
+
+.server-card{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:12px;
+    background:linear-gradient(45deg,#000428,#004e92);
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 15px #00e5ff;
+    font-weight:bold;
+}
+
+.server-card img{
+    width:28px;
+    height:20px;
+    border-radius:4px;
+    box-shadow:0 0 5px white;
+}
+
+.server-card:hover{
+    transform:scale(1.07);
+}
+
+.server-card.active{
+    border:3px solid #00f0ff;
+    background:linear-gradient(45deg,#8e2de2,#00f2ff);
+    box-shadow:0 0 25px cyan;
+}
+
+.input-group{
+    margin-top:25px;
+    text-align:left;
+}
+
+.input-group label{
+    font-weight:900;
+    font-size:18px;
+    letter-spacing:1px;
+    text-shadow:0 0 10px cyan;
+}
+
+.input-box{
+    display:flex;
+    align-items:center;
+    margin-top:10px;
+    background:linear-gradient(45deg,#000428,#004e92);
+    border-radius:15px;
+    padding:12px;
+    box-shadow:0 0 15px #00e5ff;
+    transition:0.3s;
+}
+
+
+
+.input-box .icon{
+    font-size:22px;
+    margin-right:10px;
+}
+
+.input-box input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.input-box input::placeholder{
+    color:#ccc;
+}
+
+.input-box:focus-within{
+    box-shadow:0 0 25px cyan;
+  background:linear-gradient(45deg,#240176,#8f00ff);
+}
 </style>
+
+
 </head>
 
 <body>
@@ -501,17 +671,6 @@ h2{
 <div class="profile-slide" id="profilePanel">
     <span class="close-icon" onclick="closeProfilePanel()">✖</span>
 
-    <img id="panelPhoto" style="
-        width:80px;
-        height:80px;
-        border-radius:50%;
-        object-fit:cover;
-        border:3px solid cyan;
-        display:block;
-        margin:40px auto 10px;
-        box-shadow: 0 0 20px #00f2ff;
-    ">
-
     <h3 id="panelName"></h3>
     <br>
 
@@ -523,6 +682,9 @@ h2{
     <span class="menu-btn" onclick="openMenu()">☰</span>
 </header>
 
+<div style="position:absolute; right:70px; top:25px; font-size:14px;">
+🔴 Online: <span id="onlineCount">0</span>
+</div>
 <!-- (මෙතනින් පස්සේ ඔයාගේ original HTML content එක unchanged) -->
 
 
@@ -557,22 +719,44 @@ h2{
 
 <div class="lt">⚡ ROLLEX GAMING TOPUP ⚡</div>
 
+<script>
+  atOptions = {
+    'key' : '5e45ca773a06e8211b24520789a59f52',
+    'format' : 'iframe',
+    'height' : 90,
+    'width' : 728,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/5e45ca773a06e8211b24520789a59f52/invoke.js"></script>
+
 <div class="banner">
     <img src="baner2.png.jpeg" class="active">
     <img src="baner1.jpeg">
+
+    
     
 </div>
 
+<script async="async" data-cfasync="false" src="https://pl28777220.effectivegatecpm.com/69ef160a9e9bdc35689d95e9c718e027/invoke.js"></script>
+<div id="container-69ef160a9e9bdc35689d95e9c718e027"></div>
+
+
+<script src="https://pl28755795.effectivegatecpm.com/3c/1c/1a/3c1c1a7ab399f2853026c4a859f111a7.js"></script>
 
 <div class="card" onclick="loadGame('FREE FIRE')">
 🔥 FREE FIRE 💎
 </div>
 
+<br>
+
 <div class="card" onclick="loadGame('PUBG')">
 🔥 PUBG 💎
+
+
 </div>
 
-
+<script src="https://pl28755795.effectivegatecpm.com/3c/1c/1a/3c1c1a7ab399f2853026c4a859f111a7.js"></script>
 
 </div>
 
@@ -598,52 +782,185 @@ h2{
  <img src="baner1.jpeg">
 </div>
 
-<input type="text" id="playerId" placeholder="Enter Player ID">
+
+<button onclick="goHome()">⬅ Back</button>
+
+<script src="https://pl28755795.effectivegatecpm.com/3c/1c/1a/3c1c1a7ab399f2853026c4a859f111a7.js"></script>
+
+<div class="input-group">
+  <label> ENTER PLAYER ID</label>
+  <div class="input-box">
+      <i class="icon">🆔</i>
+      <input type="text" id="playerId" placeholder="Type your Player ID..." required>
+  </div>
+</div>
 
 
 
-<select id="server">
-<option value="">Select Server</option>
-<option value="Singapore">Singapore</option>
-<option value="Asia">Asia</option>
-<option value="Brazil">Brazil</option>
-<option value="India">India</option>
-<option value="Indonesia">Indonesia</option>
-<option value="Europe">Europe</option>
-<option value="Middle East">Middle East</option>
-</select>
 
-<select id="diamond" onchange="updatePrice()">
-<option value="">Select Amount 💎</option>
-<option value="Weekly lite💎" data-price="130">Weekly lite💎</option>
-<option value="Weekly💎" data-price="530">Weekly💎</option>
-<option value="Monthly💎" data-price="2600">Monthly💎</option>
+<div class="server-title">🌍 SELECT SERVER</div>
 
-<option value="3x Monthly💎" data-price="7710">3x Monthly💎</option>
-<option value="Weekly💎 + Monthly💎" data-price="3110">Weekly💎 + Monthly💎</option>
-<option value="2x Weekly💎 + 2x Weekly lite💎" data-price="1300">2x Weekly💎 + 2x Weekly lite💎</option>
-<option value="Weekly💎 + Weekly lite💎 + Monthly💎" data-price="3300">Weekly💎 + Weekly lite💎 + Monthly💎</option>
+<div class="server-container">
 
-<option value="Evo Access 3D💎" data-price="190">Evo Access 3D💎</option>
-<option value="Evo Access 7D💎" data-price="320">Evo Access 7D💎</option>
-<option value="Evo Access 30D💎" data-price="920">Evo Access 30D💎</option>
+  <div class="server-card" data-server="Singapore">
+    <img src="https://flagcdn.com/w40/sg.png">
+    <span>Singapore</span>
+  </div>
 
-<option value="25" data-price="90">25 💎</option>
-<option value="100" data-price="320">100 💎</option>
-<option value="310" data-price="900">310 💎</option>
-<option value="520" data-price="1,500">520 💎</option>
-<option value="1060" data-price="2,920">1060 💎</option>
-<option value="2180" data-price="5,900">2180 💎</option>
-<option value="5600" data-price="14,700">5600 💎</option>
-<option value="11500" data-price="30,300">11500 💎</option>
-</select>
+  <div class="server-card" data-server="Asia">
+    <img src="https://flagcdn.com/w40/jp.png">
+    <span>Asia</span>
+  </div>
 
-<div class="price" id="priceDisplay">Price: Rs 0</div>
+  <div class="server-card" data-server="Brazil">
+    <img src="https://flagcdn.com/w40/br.png">
+    <span>Brazil</span>
+  </div>
+
+  <div class="server-card" data-server="India">
+    <img src="https://flagcdn.com/w40/in.png">
+    <span>India</span>
+  </div>
+
+  <div class="server-card" data-server="Indonesia">
+    <img src="https://flagcdn.com/w40/id.png">
+    <span>Indonesia</span>
+  </div>
+
+  <div class="server-card" data-server="Europe">
+    <img src="https://flagcdn.com/w40/eu.png">
+    <span>Europe</span>
+  </div>
+
+  <div class="server-card" data-server="Middle East">
+    <img src="https://flagcdn.com/w40/ae.png">
+    <span>Middle East</span>
+  </div>
+
+</div>
+
+<input type="hidden" id="selectedServer">
+
+<input type="hidden" id="selectedServer">
+<div class="server-title">SELECT YOUR AMOUNT</div>
+<BR>
+<div class="diamond-container">
+
+  <div class="diamond-card" data-name="Weekly lite💎" data-price="130">
+    <h3>Weekly lite💎</h3>
+    <p>Rs.130</p>
+  </div>
+
+  <div class="diamond-card" data-name="Weekly💎" data-price="530">
+    <h3>Weekly💎</h3>
+    <p>Rs.530</p>
+  </div>
+
+  <div class="diamond-card" data-name="Monthly💎" data-price="2600">
+    <h3>Monthly💎</h3>
+    <p>Rs.2600</p>
+  </div>
+
+  <div class="diamond-card" data-name="3x Monthly💎" data-price="7710">
+    <h3>3x Monthly💎</h3>
+    <p>Rs.7710</p>
+  </div>
+
+  <div class="diamond-card" data-name="Weekly💎 + Monthly💎" data-price="3110">
+    <h3>Weekly💎 + Monthly💎</h3>
+    <p>Rs.3110</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="2x Weekly💎 + 2x Weekly lite💎" data-price="1300">
+    <h3>2x Weekly💎 + 2x Weekly lite💎</h3>
+    <p>Rs.1300</p>
+  </div>
+
+ <div class="diamond-card" data-name="Weekly💎 + Weekly lite💎 + Monthly💎" data-price="3300">
+    <h3>Weekly💎 + Weekly lite💎 + Monthly💎</h3>
+    <p>Rs.3300</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="Evo Access 3D💎" data-price="190">
+    <h3>Evo Access 3D💎</h3>
+    <p>Rs.190</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="Evo Access 7D💎" data-price="320">
+    <h3>Evo Access 7D💎</h3>
+    <p>Rs.320</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="Evo Access 30D💎" data-price="920">
+    <h3>Evo Access 30D💎</h3>
+    <p>Rs.920</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="25 💎" data-price="90">
+    <h3>25 💎</h3>
+    <p>Rs.90</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="100💎" data-price="320">
+    <h3>100 💎</h3>
+    <p>Rs.320</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="310💎" data-price="900">
+    <h3>310 💎</h3>
+    <p>Rs.900</p>
+  </div>
+
+
+   <div class="diamond-card" data-name="520💎" data-price="1,500">
+    <h3>520 💎</h3>
+    <p>Rs.1500</p>
+  </div>
+
+     <div class="diamond-card" data-name="1060 💎" data-price="2920">
+    <h3>1060 💎</h3>
+    <p>Rs.2920
+    </p>
+  </div>
+
+
+     <div class="diamond-card" data-name="2180 💎" data-price="5900">
+    <h3>2180 💎</h3>
+    <p>Rs.5900</p>
+  </div>
+
+   <div class="diamond-card" data-name="5600 💎" data-price="14,700">
+    <h3>5600 💎</h3>
+    <p>Rs.14.700</p>
+  </div>
+  
+  <div class="diamond-card" data-name="11500 💎" data-price="30,300">
+    <h3>11500 💎</h3>
+    <p>Rs.30300</p>
+  </div>
+
+<script src="https://pl28755795.effectivegatecpm.com/3c/1c/1a/3c1c1a7ab399f2853026c4a859f111a7.js"></script>
+
+</div>
+
+<!-- Hidden Input -->
+<input type="hidden" id="selectedDiamond">
+<input type="hidden" id="selectedPrice">
+
+<div class="price" >
+ Price: Rs.<span id="priceDisplay">0</span>
+</div>
 
 <button onclick="sendOrder()">Order Now 💎</button>
 
 <br><br>
-<button onclick="goHome()">⬅ Back</button>
 
 </div>
 
@@ -713,36 +1030,62 @@ function goHome(){
     document.getElementById("home").classList.remove("hidden");
 }
 
-function updatePrice(){
-    let select=document.getElementById("diamond");
-    let price=select.options[select.selectedIndex].getAttribute("data-price");
-    if(price){
-        document.getElementById("priceDisplay").innerText="Price: Rs "+price;
-    }else{
-        document.getElementById("priceDisplay").innerText="Price: Rs 0";
-    }
-}
+
+const cards = document.querySelectorAll(".diamond-card");
+const priceDisplay = document.getElementById("priceDisplay");
+
+cards.forEach(card => {
+  card.addEventListener("click", function(){
+
+    // remove active class
+    cards.forEach(c => c.classList.remove("active"));
+    this.classList.add("active");
+
+    const name = this.getAttribute("data-name");
+    const price = this.getAttribute("data-price");
+
+    // save values
+    document.getElementById("selectedDiamond").value = name;
+    document.getElementById("selectedPrice").value = price;
+
+    // show price
+    priceDisplay.textContent = price;
+  });
+});
+
+
+const serverCards = document.querySelectorAll(".server-card");
+
+serverCards.forEach(card => {
+    card.addEventListener("click", function(){
+
+        serverCards.forEach(c => c.classList.remove("active"));
+        this.classList.add("active");
+
+        const server = this.getAttribute("data-server");
+        document.getElementById("selectedServer").value = server;
+    });
+});
 
 function sendOrder(){
-    let playerId=document.getElementById("playerId").value;
-    let server=document.getElementById("server").value;
-    let diamond=document.getElementById("diamond").value;
-    let price=document.getElementById("diamond").options[document.getElementById("diamond").selectedIndex].getAttribute("data-price");
+    let playerId = document.getElementById("playerId").value;
+    let server = document.getElementById("selectedServer").value;
+    let diamond = document.getElementById("selectedDiamond").value;
+    let price = document.getElementById("selectedPrice").value;
 
     if(!playerId || !server || !diamond){
         alert("Please fill all details!");
         return;
     }
 
-    let message="🎮 Game: "+selectedGame+
-    "%0A💎 Diamonds: "+diamond+
-    "%0A💰 Price: Rs "+price+
-    "%0A🆔 Player ID: "+playerId+
-    "%0A🌍 Server: "+server;
+    let message = "🎮 Game: " + selectedGame +
+    "%0A💎 Package: " + diamond +
+    "%0A💰 Price: Rs " + price +
+    "%0A🆔 Player ID: " + playerId +
+    "%0A🌍 Server: " + server;
 
-    window.open("https://wa.me/94741962754?text="+message,"_blank");
+    window.open("https://wa.me/94756706560?text=" + message, "_blank");
 }
-
 /* ===== LOGIN + PROFILE SYSTEM ===== */
 
 function lockWebsite(){
@@ -818,12 +1161,8 @@ window.addEventListener("load",function(){
 
 function openProfilePanel(){
     document.getElementById("profilePanel").style.right="0";
-
-    let name = localStorage.getItem("userName");
-    let photo = localStorage.getItem("userPhoto");
-
-    document.getElementById("panelName").innerText = name;
-    document.getElementById("panelPhoto").src = photo;
+    document.getElementById("panelName").innerText =
+        localStorage.getItem("userName");
 }
 
 function closeProfilePanel(){
@@ -854,6 +1193,45 @@ function logoutUser(){
 
 </script>
 
+<!-- 🔥 ONLINE USER COUNTER FIREBASE START -->
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBrxqLz7WkZxcV4bAGVnQBHBMUsJghyrsU",
+  authDomain: "count-1d259.firebaseapp.com",
+  databaseURL: "https://count-1d259-default-rtdb.firebaseio.com",
+  projectId: "count-1d259",
+  storageBucket: "count-1d259.firebasestorage.app",
+  messagingSenderId: "185499926971",
+  appId: "1:185499926971:web:8037cdf758504f25f7449e"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+const connectedRef = database.ref(".info/connected");
+const onlineUsersRef = database.ref("onlineUsers");
+
+connectedRef.on("value", (snap) => {
+  if (snap.val() === true) {
+
+    const userRef = onlineUsersRef.push(true);
+
+    userRef.onDisconnect().remove();
+  }
+});
+
+onlineUsersRef.on("value", (snapshot) => {
+  const count = snapshot.numChildren();
+  document.getElementById("onlineCount").innerText = count;
+});
+</script>
+<!-- 🔥 ONLINE USER COUNTER FIREBASE END -->
 </body>
 </html>
+
 
