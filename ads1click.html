@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLLEX ADS CLICK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Orbitron',sans-serif;
+background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+color:white;
+overflow-x:hidden;
+}
+
+/* LOGIN SCREEN */
+#loginScreen{
+position:fixed;
+width:100%;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle,#00c3ff,#928dab);
+animation:fadeIn 1.5s ease;
+}
+h2{
+    color: #000;
+    font-weight: 900;
+    font-family:'Orbitron',sans-serif;
+}
+
+#loginScreen img{
+    box-shadow: 0 0 30px #000000;
+    border: 3px solid #00ccff;
+    width: 30%;
+    border-radius: 20px;
+}
+.glass{
+background:rgba(0, 201, 228, 0.979);
+padding:40px;
+width: 70%;
+border-radius:20px;
+backdrop-filter:blur(20px);
+box-shadow:0 0 40px rgba(0, 0, 0, 0.6);
+text-align:center;
+}
+
+input{
+padding:12px;
+width:60%;
+border: 5PX solid #000000;
+border-radius:10px;
+margin-top:10px;
+}
+
+
+
+button:hover{
+background:#ff00ff;
+transform:scale(1.05);
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+/* MAIN DASHBOARD */
+#dashboard{
+display:none;
+padding:20px;
+animation:fadeIn 1s ease;
+}
+
+.coinBox{
+font-size:28px;
+margin-bottom:20px;
+text-align:center;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+box-shadow:0 0 20px rgba(0,255,255,0.3);
+transition:0.4s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 0 40px rgba(255,0,255,0.5);
+}
+
+.locked{
+opacity:0.4;
+pointer-events:none;
+}
+
+.unlockAnim{
+animation:glow 1s infinite alternate;
+}
+
+@keyframes glow{
+from{box-shadow:0 0 10px #00ffcc;}
+to{box-shadow:0 0 40px #ff00ff;}
+}
+
+.logout{
+position:absolute;
+top:20px;
+right:20px;
+cursor:pointer;
+}
+.menuBtn{
+position:fixed;
+top:20px;
+left:20px;
+font-size:25px;
+cursor:pointer;
+z-index:999;
+}
+
+.sidebar{
+position:fixed;
+left:-300px;
+top:0;
+width:250px;
+height:100%;
+background:linear-gradient(180deg,#111,#222);
+padding:20px;
+transition:0.5s;
+box-shadow:0 0 30px #000000;
+}
+
+.sidebar img{
+    width: 20%; 
+    border-radius: 30px;
+    border: 3px solid #00c3ff;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.sidebar button{
+width:100%;
+margin-top:20px;
+}
+@keyframes fly{
+0%{transform:translate(-50%,-50%) scale(1);}
+100%{transform:translate(-50%,-200%) scale(0);}
+}
+
+button{
+    margin-top: 20px;
+    padding:12px 25px;
+    border:none;
+    border-radius:25px;
+    background:linear-gradient(45deg,#120053,#000000);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+    animation:pulse 2s infinite;
+}
+
+</style>
+</head>
+
+<body>
+
+    <div class="menuBtn" onclick="toggleMenu()">☰</div>
+
+<div id="sidebar" class="sidebar">
+    <br>
+    <br>
+    <img src="llogo.png">
+   <h3>MENU</h3>
+   
+   <button onclick="logout()">Logout</button>
+<a href="giveawy.html">
+<button >⬅ Back</button></a>
+</div>
+
+<div id="loginScreen">
+<div class="glass">
+    <img src="llogo.png">
+<h2>ENTER USERNAME</h2>
+<input type="text" id="username">
+<br>
+<button onclick="login()">LOGIN</button>
+</div>
+</div>
+
+
+<div id="dashboard" style="display:none;">
+<div class="coinBox">
+Coins: <span id="coinCount">0</span>
+</div>
+
+<div class="card">
+<h3>🎥 Watch Ad (5 Coins)</h3>
+<p>Daily Limit: <span id="adCount">0</span>/10</p>
+<button onclick="watchAd()">WATCH NOW</button>
+</div>
+
+<div id="liteCard" class="card locked">
+<h3>🟢 Weekly Lite (1000 Coins)</h3>
+<button onclick="orderLite()">ORDER</button>
+</div>
+
+<div id="weeklyCard" class="card locked">
+<h3>🔵 Weekly Membership (5000 Coins)</h3>
+<button onclick="orderWeekly()">ORDER</button>
+</div>
+
+</div>
+
+<audio id="coinSound" src="https://www.soundjay.com/misc/sounds/coin-drop-1.mp3"></audio>
+
+<script>
+
+    function coinAnimation(){
+
+document.getElementById("coinSound").play();
+
+let coin = document.createElement("div");
+coin.innerHTML="💰";
+coin.style.position="fixed";
+coin.style.fontSize="40px";
+coin.style.top="50%";
+coin.style.left="50%";
+coin.style.animation="fly 1s forwards";
+
+document.body.appendChild(coin);
+
+setTimeout(()=>{coin.remove();},1000);
+}
+
+    window.onload = function(){
+
+let savedUser = localStorage.getItem("username");
+
+if(savedUser){
+   coins = parseInt(localStorage.getItem("coins")) || 0;
+   adsWatched = parseInt(localStorage.getItem("ads")) || 0;
+
+   document.getElementById("loginScreen").style.display="none";
+   document.getElementById("dashboard").style.display="block";
+
+   updateUI();
+}
+
+}
+
+
+    function toggleMenu(){
+   document.getElementById("sidebar").classList.toggle("active");
+}
+let coins = 0;
+let adsWatched = 0;
+
+function login(){
+let user = document.getElementById("username").value;
+if(user=="") return alert("Enter Username");
+
+localStorage.setItem("username",user);
+
+if(localStorage.getItem("coins"))
+coins = parseInt(localStorage.getItem("coins"));
+
+if(localStorage.getItem("ads"))
+adsWatched = parseInt(localStorage.getItem("ads"));
+
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("dashboard").style.display="block";
+updateUI();
+}
+
+function logout(){
+localStorage.removeItem("username");
+location.reload();
+}
+function watchAd(){
+
+if(adsWatched>=10) return alert("Daily limit reached!");
+
+let startTime = Date.now();
+let adWindow = window.open("https://www.effectivegatecpm.com/ytz0f4327k?key=70f6645af82d7e2f7c9b4d16539c353e");
+
+let checkClosed = setInterval(function(){
+   if(adWindow.closed){
+      clearInterval(checkClosed);
+      let endTime = Date.now();
+      let seconds = (endTime - startTime)/1000;
+
+      if(seconds >= 15){
+         coins+=5;
+         adsWatched++;
+         localStorage.setItem("coins",coins);
+         localStorage.setItem("ads",adsWatched);
+         updateUI();
+         alert("Ad Completed! +5 Coins");
+      } else {
+         alert("Ad not fully watched!");
+      }
+   }
+},1000);
+
+}
+
+let today = new Date().toDateString();
+let lastDate = localStorage.getItem("lastDate");
+
+if(lastDate != today){
+   adsWatched = 0;
+   localStorage.setItem("ads",0);
+   localStorage.setItem("lastDate",today);
+}
+
+function updateUI(){
+document.getElementById("coinCount").innerText=coins;
+document.getElementById("adCount").innerText=adsWatched;
+
+if(coins>=1000){
+document.getElementById("liteCard").classList.remove("locked");
+document.getElementById("liteCard").classList.add("unlockAnim");
+}
+
+if(coins>=5000){
+document.getElementById("weeklyCard").classList.remove("locked");
+document.getElementById("weeklyCard").classList.add("unlockAnim");
+}
+}
+
+function orderLite(){
+let user = localStorage.getItem("username");
+let msg = `Hello, I completed 1000 coins. Username: ${user}`;
+window.open(`https://wa.me/94756706560?text=${encodeURIComponent(msg)}`);
+}
+
+function orderWeekly(){
+let user = localStorage.getItem("username");
+let msg = `Hello, I completed 5000 coins. Username: ${user}`;
+window.open(`https://wa.me/94756706560?text=${encodeURIComponent(msg)}`);
+}
+</script>
+
+</body>
+</html>
