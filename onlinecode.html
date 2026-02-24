@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROLLEX ARENA PRO</title>
+
+<style>
+body{
+margin:0;
+font-family:'Segoe UI', sans-serif;
+background:linear-gradient(135deg,#0f0f1a,#1a1a3a);
+color:white;
+overflow-x:hidden;
+}
+
+/* HEADER */
+.header{
+text-align:center;
+padding:18px;
+font-size:22px;
+font-weight:bold;
+background:#14142b;
+box-shadow:0 0 15px #6c63ff;
+}
+
+/* MENU */
+.menuBtn{
+position:absolute;
+left:15px;
+top:18px;
+font-size:22px;
+cursor:pointer;
+}
+
+#sidebar{
+position:fixed;
+left:-220px;
+top:0;
+width:200px;
+height:100vh;
+background:#111122;
+transition:0.3s;
+padding-top:60px;
+z-index:2000;
+}
+#sidebar button{
+display:block;
+width:90%;
+margin:10px auto;
+}
+#sidebar.active{
+left:0;
+}
+
+/* LOGIN */
+#login{
+position:fixed;
+width:100%;
+height:100vh;
+background:#0f0f1a;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:1000;
+animation:fadeIn 0.8s ease;
+}
+@keyframes fadeIn{
+from{opacity:0; transform:scale(0.8);}
+to{opacity:1; transform:scale(1);}
+}
+
+input{
+padding:12px;
+margin:10px;
+border-radius:20px;
+border:none;
+width:250px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:linear-gradient(45deg,#ff00cc,#3333ff);
+color:white;
+cursor:pointer;
+box-shadow:0 0 10px #ff00cc;
+transition:0.3s;
+}
+button:hover{
+transform:scale(1.05);
+}
+
+/* USER LIST */
+#users{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+padding:20px;
+}
+
+.userCard{
+display:flex;
+align-items:center;
+background:#1b1b2f;
+padding:10px 15px;
+border-radius:15px;
+margin:10px;
+cursor:pointer;
+transition:0.3s;
+min-width:200px;
+}
+.userCard:hover{
+background:#27274a;
+transform:scale(1.05);
+}
+.userCard img{
+width:50px;
+height:50px;
+border-radius:50%;
+margin-right:10px;
+border:2px solid #00ff88;
+}
+
+/* MATCH */
+#match{
+display:none;
+position:fixed;
+width:100%;
+height:100vh;
+background:#0f0f1a;
+text-align:center;
+padding-top:60px;
+z-index:999;
+}
+.vs{
+display:flex;
+justify-content:center;
+gap:60px;
+margin-top:40px;
+}
+.vs img{
+width:120px;
+height:120px;
+border-radius:50%;
+border:4px solid gold;
+animation:drop 0.8s ease;
+}
+@keyframes drop{
+from{transform:translateY(-200px);}
+to{transform:translateY(0);}
+}
+
+/* LEADERBOARD */
+#leaderboard{
+display:none;
+position:fixed;
+width:100%;
+height:100vh;
+background:#0f0f1a;
+overflow-y:auto;
+padding-top:50px;
+z-index:999;
+}
+.leader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#1b1b2f;
+padding:15px;
+margin:10px auto;
+border-radius:15px;
+width:90%;
+max-width:600px;
+}
+.rank{
+font-weight:bold;
+}
+.deleteBtn{
+background:red;
+padding:5px 12px;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="menuBtn" onclick="toggleMenu()">☰</div>
+🎮 ROLLEX ARENA
+</div>
+
+<div id="sidebar">
+<div style="text-align:right;padding:10px;">
+<span onclick="toggleMenu()" style="cursor:pointer;font-size:20px;">❌</span>
+</div>
+
+<button onclick="showLeaderboard()">🏆 Leaderboard</button>
+<button onclick="location.reload()">🚪 Logout</button>
+<a href="giveawy.html"><button >BACK</button></a>
+
+</div>
+
+<div id="login">
+<h2>Login</h2>
+<input id="name" placeholder="Enter Name">
+<input type="file" id="photo">
+<button onclick="login()">ENTER</button>
+</div>
+
+<div id="users"></div>
+
+<div id="match">
+<button onclick="backHome()">⬅ Back</button>
+<div class="vs">
+<img id="me">
+<img id="op">
+</div>
+<h2 id="code"></h2>
+<input id="codeInput" placeholder="Enter Code">
+<button onclick="checkCode()">Send</button>
+<h3 id="coinText">Coins: 0</h3>
+</div>
+
+<div id="leaderboard"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, update, onValue, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+
+
+document.addEventListener("click", function(e){
+let sidebar = document.getElementById("sidebar");
+let menuBtn = document.querySelector(".menuBtn");
+
+if(!sidebar.contains(e.target) && !menuBtn.contains(e.target)){
+sidebar.classList.remove("active");
+}
+});
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCdeOF6wcj8JWFlrSEm2WLLyOuiQpE4Qo4",
+  authDomain: "evet-1c4e3.firebaseapp.com",
+  databaseURL: "https://evet-1c4e3-default-rtdb.firebaseio.com",
+  projectId: "evet-1c4e3",
+  storageBucket: "evet-1c4e3.appspot.com",
+  messagingSenderId: "968008028502",
+  appId: "1:968008028502:web:75acc9f0608595280506f7"
+};
+
+
+
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let uid, myData;
+let coins = 0;
+let matchCode = "";
+const ADMIN_PASS = "1234";
+
+signInAnonymously(auth).then(user=>{
+uid = user.user.uid;
+});
+
+window.login=function(){
+const name=document.getElementById("name").value;
+const file=document.getElementById("photo").files[0];
+if(!name||!file){alert("Fill all fields");return;}
+
+const reader=new FileReader();
+reader.onload=e=>{
+myData={name:name,photo:e.target.result,coins:0,online:true};
+set(ref(db,"users/"+uid),myData);
+onDisconnect(ref(db,"users/"+uid)).update({online:false});
+document.getElementById("login").style.display="none";
+loadUsers();
+};
+reader.readAsDataURL(file);
+};
+
+function loadUsers(){
+onValue(ref(db,"users"),snap=>{
+let html="<h2 align='center'>🟢 Online Players</h2>";
+snap.forEach(c=>{
+let d=c.val();
+if(c.key!==uid && d.online){
+html+=`
+<div class="userCard" onclick="startMatch('${c.key}')">
+<img src="${d.photo}">
+<div>${d.name}<div style="color:#00ff88;font-size:12px;">● Online</div></div>
+</div>`;
+}
+});
+document.getElementById("users").innerHTML=html;
+});
+}
+
+window.startMatch=function(id){
+document.getElementById("match").style.display="block";
+document.getElementById("me").src=myData.photo;
+onValue(ref(db,"users/"+id),s=>{
+document.getElementById("op").src=s.val().photo;
+});
+matchCode=Math.random().toString(36).substring(2,8).toUpperCase();
+document.getElementById("code").innerText=matchCode;
+};
+
+window.checkCode=function(){
+if(document.getElementById("codeInput").value===matchCode){
+coins+=4;
+update(ref(db,"users/"+uid),{coins:coins});
+document.getElementById("coinText").innerText="Coins: "+coins;
+}
+};
+
+window.backHome=function(){
+coins=0;
+update(ref(db,"users/"+uid),{coins:0});
+document.getElementById("match").style.display="none";
+};
+
+window.showLeaderboard=function(){
+document.getElementById("leaderboard").style.display="block";
+onValue(ref(db,"users"),snap=>{
+let arr=[];
+snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+arr.sort((a,b)=>(b.coins||0)-(a.coins||0));
+let html="<h2 align='center'>🏆 Leaderboard</h2>";
+arr.forEach((u,i)=>{
+let medal=i==0?"🥇":i==1?"🥈":i==2?"🥉":(i+1);
+html+=`
+<div class="leader">
+<div class="rank">${medal} ${u.name}</div>
+<div>${u.coins||0}</div>
+<div class="deleteBtn" onclick="deleteUser('${u.id}')">X</div>
+</div>`;
+});
+html+=`<button onclick="closeLeaderboard()">⬅ Back</button>`;
+document.getElementById("leaderboard").innerHTML=html;
+});
+};
+
+window.closeLeaderboard=function(){
+document.getElementById("leaderboard").style.display="none";
+};
+
+window.deleteUser=function(id){
+let pass=prompt("Admin Password:");
+if(pass===ADMIN_PASS){
+remove(ref(db,"users/"+id));
+}else{
+alert("Wrong Password");
+}
+};
+
+window.toggleMenu=function(){
+document.getElementById("sidebar").classList.toggle("active");
+};
+</script>
+
+</body>
+</html>
