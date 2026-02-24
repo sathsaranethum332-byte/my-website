@@ -187,7 +187,6 @@ const firebaseConfig = {
   messagingSenderId: "968008028502",
   appId: "1:968008028502:web:75acc9f0608595280506f7"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
@@ -199,8 +198,6 @@ let currentRoom=null;
 signInAnonymously(auth).then(user=>{
 uid=user.user.uid;
 });
-
-/* LOGIN */
 window.login=function(){
 const name=document.getElementById("name").value;
 const file=document.getElementById("photo").files[0];
@@ -208,16 +205,57 @@ if(!name||!file){alert("Fill all fields");return;}
 
 const reader=new FileReader();
 reader.onload=e=>{
-myData={name,photo:e.target.result,coins:0,online:true};
-set(ref(db,"users/"+uid),myData);
-onDisconnect(ref(db,"users/"+uid)).update({online:false});
+
+const userRef=ref(db,"users/"+uid);
+
+onValue(userRef,snap=>{
+
+if(!snap.exists()){
+  
+  // 🟢 FIRST TIME LOGIN
+  myData={
+    name,
+    photo:e.target.result,
+    coins:10,
+    online:true,
+    firstLogin:false
+  };
+
+  set(userRef,myData);
+  showNotify("🎁 First Login Bonus +10 Coins");
+
+}else{
+
+  // 🔁 RETURN USER
+  let oldData=snap.val();
+  myData={
+    name:oldData.name,
+    photo:oldData.photo,
+    coins:oldData.coins || 0,
+    online:true,
+    firstLogin:false
+  };
+
+  update(userRef,{online:true});
+}
+
+onDisconnect(userRef).update({online:false});
+
+coins=myData.coins;
+document.getElementById("coinText").innerText="Coins: "+coins;
+
 document.getElementById("login").style.display="none";
+
 loadUsers();
 listenInvites();
-};
-reader.readAsDataURL(file);
+listenRoomActivation();
+
+},{onlyOnce:true});
+
 };
 
+reader.readAsDataURL(file);
+};
 /* LOAD USERS */
 function loadUsers(){
 onValue(ref(db,"users"),snap=>{
@@ -238,7 +276,7 @@ document.getElementById("users").innerHTML=html;
 
 /* SEND INVITE */
 window.sendInvite=function(opponentId){
-const roomId=uid+"_"+opponentId;
+const roomId=[uid,opponentId].sort().join("_");
 set(ref(db,"rooms/"+roomId),{
 player1:uid,
 player2:opponentId,
@@ -256,6 +294,19 @@ let d=r.val();
 if(d.player2===uid && !d.active){
 if(confirm("Room Invite Received! Accept?")){
 update(ref(db,"rooms/"+r.key),{active:true});
+}
+}
+});
+});
+}
+
+/* LISTEN ROOM ACTIVATION */
+function listenRoomActivation(){
+onValue(ref(db,"rooms"),snap=>{
+snap.forEach(r=>{
+let d=r.val();
+if(d.active && (d.player1===uid || d.player2===uid)){
+if(currentRoom!==r.key){
 enterRoom(r.key,d.player1,d.player2);
 }
 }
@@ -269,7 +320,9 @@ currentRoom=roomId;
 document.getElementById("match").style.display="block";
 document.getElementById("me").src=myData.photo;
 
-onValue(ref(db,"users/"+(p1===uid?p2:p1)),s=>{
+const opponent = (p1===uid?p2:p1);
+
+onValue(ref(db,"users/"+opponent),s=>{
 document.getElementById("op").src=s.val().photo;
 });
 
@@ -277,9 +330,11 @@ generateCode(roomId);
 
 onValue(ref(db,"rooms/"+roomId),snap=>{
 let d=snap.val();
+
 if(d.code){
 document.getElementById("code").innerText=d.code;
 }
+
 if(d.answered){
 if(d.winner===uid){
 coins+=4;
@@ -297,7 +352,7 @@ generateCode(roomId);
 });
 }
 
-/* GENERATE SAME CODE */
+/* GENERATE CODE */
 function generateCode(roomId){
 const newCode=Math.random().toString(36).substring(2,8).toUpperCase();
 update(ref(db,"rooms/"+roomId),{code:newCode});
@@ -306,6 +361,7 @@ update(ref(db,"rooms/"+roomId),{code:newCode});
 /* CHECK CODE */
 window.checkCode=function(){
 const input=document.getElementById("codeInput").value;
+
 onValue(ref(db,"rooms/"+currentRoom),snap=>{
 let d=snap.val();
 if(!d.answered && input===d.code){
@@ -320,6 +376,7 @@ winner:uid
 /* BACK */
 window.backHome=function(){
 document.getElementById("match").style.display="none";
+currentRoom=null;
 };
 
 /* NOTIFICATION */
