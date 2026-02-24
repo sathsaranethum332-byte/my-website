@@ -199,11 +199,6 @@ font-size:18px;
         <button class="btn" onclick="startLoading()">Play Now</button>
     </div>
 
-       <div class="card">
-        <h2>🎡 LUCKY TAP</h2>
-        <p>The one who like the most wins.!<BR>Upload your Gaming Profile photo</p>
-        <button class="btn" onclick="startLoading1()">upload</button>
-    </div>
 
         <div class="card">
         <h2>🎡 ADS CLICK</h2>
@@ -211,7 +206,12 @@ font-size:18px;
         <button class="btn" onclick="startLoading2()">Add Coin</button>
     </div>
     
-  
+        <div class="card">
+        <h2>🎡 TYPE CODE</h2>
+        <p>CLICK ADS EARN COIN</p>
+        <button class="btn" onclick="startLoading3()">type code</button>
+    </div>
+   
 </div>
 <!-- LOADING SCREEN -->
 <div class="loader" id="loader">
@@ -246,7 +246,13 @@ function startLoading2(){
     },2500);
 }
 
+function startLoading3(){
+    document.getElementById("loader").classList.add("active");
 
+    setTimeout(()=>{
+        window.location.href="onlinecode.html";
+    },2500);
+}
 
 /* BACK BUTTON FUNCTION */
 function goBack(){
@@ -257,4 +263,3 @@ window.location.href = "index.html";
 
 </body>
 </html>
-
