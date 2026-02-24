@@ -206,6 +206,12 @@ font-size:18px;
         <button class="btn" onclick="startLoading2()">Add Coin</button>
     </div>
     
+         <div class="card">
+        <h2>🎡 tic tak tok</h2>
+        <p>CLICK ADS EARN COIN</p>
+        <button class="btn" onclick="startLoading1()">Add Coin</button>
+    </div>
+    
  
    
 </div>
@@ -225,6 +231,13 @@ function startLoading(){
     },2500);
 }
 
+function startLoading1(){
+    document.getElementById("loader").classList.add("active");
+
+    setTimeout(()=>{
+        window.location.href="luckyspin.html";
+    },2500);
+}
 
 
 function startLoading2(){
@@ -245,4 +258,3 @@ window.location.href = "index.html";
 
 </body>
 </html>
-
