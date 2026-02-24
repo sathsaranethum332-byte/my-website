@@ -210,6 +210,12 @@ font-size:18px;
         <p>CLICK ADS EARN COIN</p>
         <button class="btn" onclick="startLoading2()">Add Coin</button>
     </div>
+    
+        <div class="card">
+        <h2>🎡 TYPE CODE</h2>
+        <p>CLICK ADS EARN COIN</p>
+        <button class="btn" onclick="startLoading3()">type code</button>
+    </div>
    
 </div>
 <!-- LOADING SCREEN -->
@@ -245,6 +251,13 @@ function startLoading2(){
     },2500);
 }
 
+function startLoading3(){
+    document.getElementById("loader").classList.add("active");
+
+    setTimeout(()=>{
+        window.location.href="cardclick.html";
+    },2500);
+}
 
 /* BACK BUTTON FUNCTION */
 function goBack(){
