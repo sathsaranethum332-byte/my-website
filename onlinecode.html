@@ -3,48 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROLLEX ARENA PRO</title>
+<title>ROLLEX ARENA ULTRA</title>
 
 <style>
 body{
 margin:0;
-font-family:'Segoe UI', sans-serif;
+font-family:Segoe UI;
 background:linear-gradient(135deg,#0f0f1a,#1a1a3a);
 color:white;
-overflow-x:hidden;
-}
-
-/* HEADER */
-.header{
 text-align:center;
-padding:18px;
-font-size:22px;
-font-weight:bold;
-background:#14142b;
-box-shadow:0 0 15px #6c63ff;
 }
 
-.menuBtn{
-position:absolute;
-left:15px;
-top:18px;
-font-size:22px;
+button{
+padding:8px 15px;
+border:none;
+border-radius:15px;
+background:linear-gradient(45deg,#ff00cc,#3333ff);
+color:white;
 cursor:pointer;
+margin:5px;
 }
 
-#sidebar{
-position:fixed;
-left:-220px;
-top:0;
-width:200px;
-height:100vh;
-background:#111122;
-transition:0.3s;
-padding-top:60px;
-z-index:2000;
+input{
+padding:8px;
+border-radius:15px;
+border:none;
+margin:5px;
 }
-#sidebar.active{left:0;}
-#sidebar button{display:block;width:90%;margin:10px auto;}
 
 #login{
 position:fixed;
@@ -58,215 +43,134 @@ align-items:center;
 z-index:1000;
 }
 
-input{
-padding:12px;
-margin:10px;
-border-radius:20px;
-border:none;
-width:250px;
-}
-
-button{
-padding:10px 20px;
-border:none;
-border-radius:20px;
-background:linear-gradient(45deg,#ff00cc,#3333ff);
-color:white;
-cursor:pointer;
-box-shadow:0 0 10px #ff00cc;
-}
-
-#users{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-padding:20px;
-}
-
 .userCard{
+background:#1b1b2f;
+padding:10px;
+margin:10px;
+border-radius:15px;
 display:flex;
 align-items:center;
-background:#1b1b2f;
-padding:10px 15px;
-border-radius:15px;
-margin:10px;
-cursor:pointer;
-min-width:200px;
+justify-content:space-between;
 }
+
 .userCard img{
-width:50px;
-height:50px;
+width:45px;
+height:45px;
 border-radius:50%;
-margin-right:10px;
-border:2px solid #00ff88;
 }
 
-#match{
+.readyRed{color:red;}
+.readyGreen{color:lime;}
+
+#game{
 display:none;
-position:fixed;
-width:100%;
-height:100vh;
-background:#0f0f1a;
-text-align:center;
-padding-top:60px;
-z-index:999;
-}
-
-.vs{
-display:flex;
-justify-content:center;
-gap:60px;
-margin-top:40px;
-}
-
-.vs img{
-width:120px;
-height:120px;
-border-radius:50%;
-border:4px solid gold;
-}
-
-.notification{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-background:red;
-padding:10px 20px;
-border-radius:10px;
-z-index:5000;
+margin-top:20px;
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-<div class="menuBtn" onclick="toggleMenu()">☰</div>
-🎮 ROLLEX ARENA
-</div>
-
-<div id="sidebar">
-<div style="text-align:right;padding:10px;">
-<span onclick="toggleMenu()" style="cursor:pointer;">❌</span>
-</div>
-<button onclick="location.reload()">🚪 Logout</button>
-</div>
-
 <div id="login">
-<h2>Login</h2>
-<input id="name" placeholder="Enter Name">
+<h2>Register Once</h2>
+<input id="name" placeholder="Name">
 <input type="file" id="photo">
-<button onclick="login()">ENTER</button>
+<button onclick="register()">ENTER</button>
 </div>
+
+<h3 id="coinDisplay"></h3>
+<h4 id="unlockText"></h4>
 
 <div id="users"></div>
 
-<div id="match">
-<button onclick="backHome()">⬅ Back</button>
-<div class="vs">
-<img id="me">
-<img id="op">
+<div id="invitePopup" style="display:none;"></div>
+
+<div id="game">
+<h2>GAME ROOM</h2>
+
+<div>
+Player 1: <span id="p1Status" class="readyRed">Not Ready</span><br>
+Player 2: <span id="p2Status" class="readyRed">Not Ready</span>
 </div>
-<h2 id="code"></h2>
+
+<button onclick="readyUp()">READY</button>
+
+<h2 id="countdown"></h2>
+<h2 id="codeText"></h2>
+
 <input id="codeInput" placeholder="Enter Code">
-<button onclick="checkCode()">Send</button>
-<h3 id="coinText">Coins: 0</h3>
+<button onclick="sendCode()">SEND</button>
+
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, onValue, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCdeOF6wcj8JWFlrSEm2WLLyOuiQpE4Qo4",
-  authDomain: "evet-1c4e3.firebaseapp.com",
-  databaseURL: "https://evet-1c4e3-default-rtdb.firebaseio.com",
-  projectId: "evet-1c4e3",
-  storageBucket: "evet-1c4e3.appspot.com",
-  messagingSenderId: "968008028502",
-  appId: "1:968008028502:web:75acc9f0608595280506f7"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const firebaseConfig = { apiKey: "AIzaSyCdeOF6wcj8JWFlrSEm2WLLyOuiQpE4Qo4", authDomain: "evet-1c4e3.firebaseapp.com", databaseURL: "https://evet-1c4e3-default-rtdb.firebaseio.com", projectId: "evet-1c4e3", storageBucket: "evet-1c4e3.appspot.com", messagingSenderId: "968008028502", appId: "1:968008028502:web:75acc9f0608595280506f7" };
 
-let uid, myData;
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const auth=getAuth(app);
+
+let uid,myData,currentRoom=null;
 let coins=0;
-let currentRoom=null;
+let lifetime=0;
 
 signInAnonymously(auth).then(user=>{
 uid=user.user.uid;
+checkUser();
 });
-window.login=function(){
+
+function checkUser(){
+onValue(ref(db,"users/"+uid),snap=>{
+if(snap.exists()){
+alert("Already Registered!");
+}else{
+document.getElementById("login").style.display="flex";
+}
+},{onlyOnce:true});
+}
+
+window.register=function(){
 const name=document.getElementById("name").value;
 const file=document.getElementById("photo").files[0];
-if(!name||!file){alert("Fill all fields");return;}
+if(!name||!file)return alert("Fill all");
 
 const reader=new FileReader();
 reader.onload=e=>{
-
-const userRef=ref(db,"users/"+uid);
-
-onValue(userRef,snap=>{
-
-if(!snap.exists()){
-  
-  // 🟢 FIRST TIME LOGIN
-  myData={
-    name,
-    photo:e.target.result,
-    coins:10,
-    online:true,
-    firstLogin:false
-  };
-
-  set(userRef,myData);
-  showNotify("🎁 First Login Bonus +10 Coins");
-
-}else{
-
-  // 🔁 RETURN USER
-  let oldData=snap.val();
-  myData={
-    name:oldData.name,
-    photo:oldData.photo,
-    coins:oldData.coins || 0,
-    online:true,
-    firstLogin:false
-  };
-
-  update(userRef,{online:true});
+myData={
+name:name,
+photo:e.target.result,
+coins:0,
+lifetime:0,
+online:true
+};
+set(ref(db,"users/"+uid),myData);
+document.getElementById("login").style.display="none";
+start();
+};
+reader.readAsDataURL(file);
 }
 
-onDisconnect(userRef).update({online:false});
-
-coins=myData.coins;
-document.getElementById("coinText").innerText="Coins: "+coins;
-
-document.getElementById("login").style.display="none";
-
+function start(){
 loadUsers();
 listenInvites();
-listenRoomActivation();
+updateUnlock();
+}
 
-},{onlyOnce:true});
-
-};
-
-reader.readAsDataURL(file);
-};
-/* LOAD USERS */
 function loadUsers(){
 onValue(ref(db,"users"),snap=>{
-let html="<h2 align='center'>🟢 Online Players</h2>";
+let html="";
 snap.forEach(c=>{
 let d=c.val();
 if(c.key!==uid && d.online){
 html+=`
-<div class="userCard" onclick="sendInvite('${c.key}')">
+<div class="userCard">
 <img src="${d.photo}">
 <div>${d.name}</div>
+<button onclick="invite('${c.key}')">Invite</button>
 </div>`;
 }
 });
@@ -274,123 +178,119 @@ document.getElementById("users").innerHTML=html;
 });
 }
 
-/* SEND INVITE */
-window.sendInvite=function(opponentId){
-const roomId=[uid,opponentId].sort().join("_");
-set(ref(db,"rooms/"+roomId),{
-player1:uid,
-player2:opponentId,
-active:false,
-answered:false
+window.invite=function(id){
+set(ref(db,"invites/"+id),{
+from:uid
 });
-alert("Invite Sent!");
-};
+}
 
-/* LISTEN INVITE */
 function listenInvites(){
-onValue(ref(db,"rooms"),snap=>{
-snap.forEach(r=>{
-let d=r.val();
-if(d.player2===uid && !d.active){
-if(confirm("Room Invite Received! Accept?")){
-update(ref(db,"rooms/"+r.key),{active:true});
-}
-}
-});
-});
-}
-
-/* LISTEN ROOM ACTIVATION */
-function listenRoomActivation(){
-onValue(ref(db,"rooms"),snap=>{
-snap.forEach(r=>{
-let d=r.val();
-if(d.active && (d.player1===uid || d.player2===uid)){
-if(currentRoom!==r.key){
-enterRoom(r.key,d.player1,d.player2);
-}
-}
-});
-});
-}
-
-/* ENTER ROOM */
-function enterRoom(roomId,p1,p2){
-currentRoom=roomId;
-document.getElementById("match").style.display="block";
-document.getElementById("me").src=myData.photo;
-
-const opponent = (p1===uid?p2:p1);
-
-onValue(ref(db,"users/"+opponent),s=>{
-document.getElementById("op").src=s.val().photo;
-});
-
-generateCode(roomId);
-
-onValue(ref(db,"rooms/"+roomId),snap=>{
-let d=snap.val();
-
-if(d.code){
-document.getElementById("code").innerText=d.code;
-}
-
-if(d.answered){
-if(d.winner===uid){
-coins+=4;
-update(ref(db,"users/"+uid),{coins});
-document.getElementById("coinText").innerText="Coins: "+coins;
-showNotify("You Won +4");
-}else{
-showNotify("Opponent Answered First!");
-}
-setTimeout(()=>{
-update(ref(db,"rooms/"+roomId),{answered:false});
-generateCode(roomId);
-},3000);
+onValue(ref(db,"invites/"+uid),snap=>{
+if(snap.exists()){
+let from=snap.val().from;
+document.getElementById("invitePopup").innerHTML=
+`
+<h3>Invite Received</h3>
+<button onclick="accept('${from}')">Accept</button>
+<button onclick="reject('${from}')">Reject</button>
+`;
+document.getElementById("invitePopup").style.display="block";
 }
 });
 }
 
-/* GENERATE CODE */
-function generateCode(roomId){
-const newCode=Math.random().toString(36).substring(2,8).toUpperCase();
-update(ref(db,"rooms/"+roomId),{code:newCode});
+window.accept=function(from){
+currentRoom=[uid,from].sort().join("_");
+set(ref(db,"rooms/"+currentRoom),{
+p1:uid,
+p2:from,
+ready:{},
+coins:{}
+});
+remove(ref(db,"invites/"+uid));
+document.getElementById("invitePopup").style.display="none";
+enterGame();
 }
 
-/* CHECK CODE */
-window.checkCode=function(){
-const input=document.getElementById("codeInput").value;
+window.reject=function(from){
+alert("Rejected");
+remove(ref(db,"invites/"+uid));
+}
 
+function enterGame(){
+document.getElementById("game").style.display="block";
+listenRoom();
+}
+
+function readyUp(){
+update(ref(db,"rooms/"+currentRoom+"/ready/"+uid),true);
+}
+
+function listenRoom(){
 onValue(ref(db,"rooms/"+currentRoom),snap=>{
 let d=snap.val();
-if(!d.answered && input===d.code){
-update(ref(db,"rooms/"+currentRoom),{
-answered:true,
-winner:uid
+if(!d)return;
+
+let r1=d.ready[d.p1];
+let r2=d.ready[d.p2];
+
+document.getElementById("p1Status").className=r1?"readyGreen":"readyRed";
+document.getElementById("p2Status").className=r2?"readyGreen":"readyRed";
+
+if(r1 && r2){
+startCountdown();
+}
 });
 }
-},{onlyOnce:true});
-};
 
-/* BACK */
-window.backHome=function(){
-document.getElementById("match").style.display="none";
-currentRoom=null;
-};
-
-/* NOTIFICATION */
-function showNotify(msg){
-let div=document.createElement("div");
-div.className="notification";
-div.innerText=msg;
-document.body.appendChild(div);
-setTimeout(()=>{div.remove();},2000);
+function startCountdown(){
+let c=10;
+let timer=setInterval(()=>{
+document.getElementById("countdown").innerText=c;
+c--;
+if(c<0){
+clearInterval(timer);
+generateCode();
+}
+},1000);
 }
 
-window.toggleMenu=function(){
-document.getElementById("sidebar").classList.toggle("active");
-};
+function generateCode(){
+let code=Math.random().toString(36).substring(2,7).toUpperCase();
+update(ref(db,"rooms/"+currentRoom),{code:code,answered:false});
+document.getElementById("codeText").innerText=code;
+}
+
+window.sendCode=function(){
+onValue(ref(db,"rooms/"+currentRoom),snap=>{
+let d=snap.val();
+if(!d.answered && document.getElementById("codeInput").value===d.code){
+update(ref(db,"rooms/"+currentRoom),{answered:true,winner:uid});
+coins+=4;
+update(ref(db,"users/"+uid),{coins:coins});
+checkWin();
+}
+},{onlyOnce:true});
+}
+
+function checkWin(){
+if(coins>=1500){
+alert("YOU WIN GAME!");
+lifetime+=coins;
+update(ref(db,"users/"+uid),{lifetime:lifetime,coins:0});
+coins=0;
+}
+updateUnlock();
+document.getElementById("coinDisplay").innerText="Coins: "+coins;
+}
+
+function updateUnlock(){
+let txt="";
+if(coins>=3000) txt+="WeeklyLite Unlocked! ";
+if(coins>=6000) txt+="Weekly Unlocked!";
+document.getElementById("unlockText").innerText=txt;
+}
+
 </script>
 </body>
 </html>
