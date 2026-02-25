@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRO ULTRA EVENT APPLY</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#0f0f2a,#000,#1a0033);
+background-size:400% 400%;
+animation:bgMove 15s ease infinite;
+color:white;
+overflow-x:hidden;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* ===== LIQUID GLASS CONTAINER ===== */
+.container{
+    
+padding:30px;
+width:80%;
+margin:auto;
+border-radius:25px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,0.15);
+box-shadow:
+0 0 40px rgba(0,255,255,0.2),
+0 0 80px rgba(255,0,255,0.1);
+animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(30px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* ===== PREMIUM HEADER ===== */
+header{
+padding:30px;
+text-align:center;
+font-size:32px;
+font-weight:800;
+background:linear-gradient(90deg,#00ffff,#ff00cc);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:0 0 20px rgba(0,255,255,0.5);
+}
+
+/* ===== INPUT GLASS ===== */
+input{
+    align-items: center;
+width:90%;
+padding:14px;
+margin:10px 0;
+border:none;
+border-radius:15px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+color:white;
+outline:none;
+border:1px solid rgba(255,255,255,0.1);
+transition:0.4s;
+}
+
+input:focus{
+box-shadow:0 0 20px #00ffff;
+transform:scale(1.02);
+}
+
+/* ===== GLASS CARDS ===== */
+.card{
+    margin-top: 15px;
+flex:1 1 45%;
+padding:18px;
+text-align:center;
+border-radius:20px;
+cursor:pointer;
+background:rgba(255,255,255,0.07);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,0.1);
+transition:all 0.4s ease;
+font-weight:bold;
+min-width:120px;
+}
+
+.card:hover{
+transform: scale(1.01);
+box-shadow:0 0 10px #00ffff;
+}
+
+.selected{
+background:linear-gradient(135deg,#00014d,#004146);
+color:white;
+box-shadow:0 0 20px #00ffff;
+}
+
+/* ===== PREMIUM BUTTON ===== */
+button{
+width:100%;
+padding:18px;
+margin-top:20px;
+border:none;
+border-radius:20px;
+background:linear-gradient(135deg,#00ffff,#001aff);
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+transition:0.4s;
+box-shadow:0 0 25px rgba(0,255,255,0.4);
+}
+
+button:hover{
+transform:scale(1.02);
+box-shadow:0 0 50px #ff00cc;
+}
+
+/* ===== GLASS MESSAGE ===== */
+.message{
+    margin-top: 20px;
+background:rgba(255,255,255,0.06);
+padding:18px;
+border-radius:20px;
+margin-bottom:20px;
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,0.1);
+box-shadow:0 0 20px rgba(0,255,255,0.15);
+animation:pop 0.5s ease;
+}
+
+.highlight{
+color:#00ffff;
+font-weight:bold;
+}
+
+.liquid-border{
+height:4px;
+width:100%;
+background:linear-gradient(90deg,#00ffff,#ff00cc,#00ffff);
+background-size:200% 200%;
+animation:borderMove 3s linear infinite;
+}
+
+@keyframes borderMove{
+0%{background-position:0% 50%;}
+100%{background-position:200% 50%;}
+}
+
+/* ===== POPUP STYLE ===== */
+.popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0.8);
+background:rgba(0,0,0,0.8);
+backdrop-filter:blur(20px);
+padding:30px;
+border-radius:20px;
+width:90%;
+max-width:400px;
+text-align:center;
+z-index:9999;
+box-shadow:0 0 40px #00ffff;
+display:none;
+animation:popupShow 0.3s ease forwards;
+}
+
+@keyframes popupShow{
+from{opacity:0; transform:translate(-50%,-50%) scale(0.7);}
+to{opacity:1; transform:translate(-50%,-50%) scale(1);}
+}
+
+.popup button{
+margin-top:10px;
+}
+
+#overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+top:0;
+left:0;
+z-index:9998;
+display:none;
+}
+
+</style>
+</head>
+<body>
+
+    <div class="popup" id="replyPopup" style="display:none;">
+<h3>🔐 Admin Reply Access</h3>
+<input type="password" id="adminPass" placeholder="Enter Admin Password">
+<button onclick="confirmReply()">Reply Now</button>
+<button onclick="closeReply()">Cancel</button>
+</div>
+
+<header>🔥CUSTOM EVENT APPLY🔥</header>
+<div class="liquid-border"></div>
+<div id="overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<script>
+tsParticles.load("tsparticles", {
+particles: {
+number: { value: 60 },
+color: { value: "#00ffff" },
+shape: { type: "circle" },
+opacity: { value: 0.5 },
+size: { value: 3 },
+move: { enable: true, speed: 2 }
+}
+});
+</script>
+<div id="tsparticles"></div>
+
+
+<div class="container">
+
+<input id="gameId" placeholder="Enter Game ID">
+<input id="name" placeholder="Enter Name">
+<input id="whatsapp" placeholder="Enter WhatsApp Number">
+<input id="level" placeholder="Enter Level Amount">
+
+<h3>Select Server</h3>
+<div class="card-container" id="servers">
+<div class="card">Singapore</div>
+<div class="card">Brazil</div>
+<div class="card">India</div>
+<div class="card">Asia</div>
+<div class="card">Indonesia</div>
+<div class="card">Europe</div>
+<div class="card">USA</div>
+<div class="card">Middle East</div>
+</div>
+
+<h3>Select Mode</h3>
+<div class="card-container" id="modes">
+<div class="card">1v1</div>
+<div class="card">2v2</div>
+<div class="card">4v4</div>
+<div class="card">6v6</div>
+<div class="card">Battle Royal</div>
+</div>
+
+<button onclick="applyCustom()">🚀 APPLY CUSTOM</button>
+<audio id="clickSound" src="https://www.myinstants.com/media/sounds/click.mp3"></audio>
+
+<div id="messages"></div>
+
+</div>
+
+<div class="popup" id="popup">
+<h3>✅ Apply Sent!</h3>
+<p>Custom details WhatsApp osse ewanna puluwan.</p>
+<button onclick="closePopup()">OK</button>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCdeOF6wcj8JWFlrSEm2WLLyOuiQpE4Qo4",
+authDomain: "evet-1c4e3.firebaseapp.com",
+databaseURL: "https://evet-1c4e3-default-rtdb.firebaseio.com",
+projectId: "evet-1c4e3",
+storageBucket: "evet-1c4e3.appspot.com",
+messagingSenderId: "968008028502",
+appId: "1:968008028502:web:75acc9f0608595280506f7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let selectedServer="";
+let selectedMode="";
+let currentReplyNumber="";
+
+// ================= SERVER SELECT =================
+document.querySelectorAll("#servers .card").forEach(card=>{
+card.onclick=()=>{
+document.querySelectorAll("#servers .card").forEach(c=>c.classList.remove("selected"));
+card.classList.add("selected");
+selectedServer=card.innerText;
+}
+});
+
+// ================= MODE SELECT =================
+document.querySelectorAll("#modes .card").forEach(card=>{
+card.onclick=()=>{
+document.querySelectorAll("#modes .card").forEach(c=>c.classList.remove("selected"));
+card.classList.add("selected");
+selectedMode=card.innerText;
+}
+});
+
+// ================= APPLY FUNCTION =================
+window.applyCustom=function(){
+
+document.getElementById("clickSound").play();
+
+let id=document.getElementById("gameId").value;
+let name=document.getElementById("name").value;
+let whatsapp=document.getElementById("whatsapp").value;
+let level=document.getElementById("level").value;
+
+if(!id||!name||!whatsapp||!level||!selectedServer||!selectedMode){
+alert("Fill all details!");
+return;
+}
+
+push(ref(db,"applications"),{
+id,name,whatsapp,level,selectedServer,selectedMode
+});
+
+document.getElementById("overlay").style.display="block";
+document.getElementById("popup").style.display="block";
+
+// Clear fields
+document.getElementById("gameId").value="";
+document.getElementById("name").value="";
+document.getElementById("whatsapp").value="";
+document.getElementById("level").value="";
+}
+// ================= DISPLAY APPLICATIONS =================
+onValue(ref(db,"applications"),snapshot=>{
+document.getElementById("messages").innerHTML="";
+snapshot.forEach(child=>{
+let data=child.val();
+let key=child.key;
+
+let div=document.createElement("div");
+div.className="message";
+
+div.innerHTML=`
+<span class="highlight">${data.id}</span> | ${data.name}<br>
+📱 WhatsApp: <span class="highlight">${data.whatsapp}</span><br>
+🎮 Mode: ${data.selectedMode} | 🌍 Server: ${data.selectedServer}<br>
+⭐ Level: ${data.level}
+<br><br>
+<button class="deleteBtn" onclick="deleteMsg('${key}')">Delete</button>
+<button class="replyBtn" onclick="replyUser('${data.whatsapp}')">Reply</button>
+`;
+
+document.getElementById("messages").appendChild(div);
+});
+});
+
+// ================= DELETE FUNCTION =================
+window.deleteMsg=function(key){
+let pass=prompt("Enter Admin Password");
+if(pass==="0000"){
+remove(ref(db,"applications/"+key));
+}else{
+alert("Wrong Password!");
+}
+}
+
+// ================= REPLY SYSTEM =================
+window.replyUser=function(num){
+currentReplyNumber=num;
+document.getElementById("overlay").style.display="block";
+document.getElementById("replyPopup").style.display="block";
+}
+
+window.closePopup=function(){
+document.getElementById("popup").style.display="none";
+document.getElementById("overlay").style.display="none";
+}
+window.confirmReply=function(){
+
+let pass=document.getElementById("adminPass").value;
+
+if(pass==="0000"){
+
+document.getElementById("replyPopup").style.display="none";
+document.getElementById("adminPass").value="";
+
+// WhatsApp Open
+window.open(
+"https://wa.me/"+currentReplyNumber+
+"?text=🔥 PRO CUSTOM EVENT REPLY:%0A%0A✅ Your custom request accepted.%0A📅 Match date & time will be sent soon."
+);
+
+}
+else{
+alert("❌ Wrong Admin Password!");
+}
+
+document.getElementById("overlay").style.display="none";
+}
+window.closeReply=function(){
+document.getElementById("replyPopup").style.display="none";
+document.getElementById("overlay").style.display="none";
+}
+
+
+document.getElementById("overlay").onclick=function(){
+document.getElementById("popup").style.display="none";
+document.getElementById("replyPopup").style.display="none";
+document.getElementById("overlay").style.display="none";
+}
+</script>
+</body>
+</html>
