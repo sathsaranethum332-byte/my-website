@@ -364,7 +364,7 @@ document.getElementById("messages").appendChild(div);
 // ================= DELETE FUNCTION =================
 window.deleteMsg=function(key){
 let pass=prompt("Enter Admin Password");
-if(pass==="0000"){
+if(pass==="15013"){
 remove(ref(db,"applications/"+key));
 }else{
 alert("Wrong Password!");
@@ -386,14 +386,14 @@ window.confirmReply=function(){
 
 let pass=document.getElementById("adminPass").value;
 
-if(pass==="0000"){
+if(pass==="15013"){
 
 document.getElementById("replyPopup").style.display="none";
 document.getElementById("adminPass").value="";
 
 // WhatsApp Open
 window.open(
-"https://wa.me/"+currentReplyNumber+
+"https://wa.me/94"+currentReplyNumber+
 "?text=🔥 PRO CUSTOM EVENT REPLY:%0A%0A✅ Your custom request accepted.%0A📅 Match date & time will be sent soon."
 );
 
@@ -418,3 +418,4 @@ document.getElementById("overlay").style.display="none";
 </script>
 </body>
 </html>
+
