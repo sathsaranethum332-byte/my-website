@@ -196,6 +196,25 @@ left:0;
 z-index:9998;
 display:none;
 }
+.backBtn{
+width:100%;
+padding:16px;
+margin-top:10px;
+border:none;
+border-radius:20px;
+background:linear-gradient(135deg,#444,#002fff);
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+.backBtn:hover{
+transform:scale(1.02);
+box-shadow:0 0 25px #00ffff;
+background:linear-gradient(135deg,#001aff,#00ffff);
+}
 
 </style>
 </head>
@@ -234,7 +253,7 @@ move: { enable: true, speed: 2 }
 <input id="name" placeholder="Enter Name">
 <input id="whatsapp" placeholder="Enter WhatsApp Number">
 <input id="level" placeholder="Enter Level Amount">
-
+<button onclick="goBack()" class="backBtn">⬅ BACK</button>
 <h3>Select Server</h3>
 <div class="card-container" id="servers">
 <div class="card">Singapore</div>
@@ -257,10 +276,23 @@ move: { enable: true, speed: 2 }
 </div>
 
 <button onclick="applyCustom()">🚀 APPLY CUSTOM</button>
+
+
 <audio id="clickSound" src="https://www.myinstants.com/media/sounds/click.mp3"></audio>
 
-<div id="messages"></div>
 
+<h3>📂 View By Mode</h3>
+<div class="card-container" id="modeFilters">
+<div class="card filterCard" data-mode="ALL">ALL</div>
+<div class="card filterCard" data-mode="1v1">1v1</div>
+<div class="card filterCard" data-mode="2v2">2v2</div>
+<div class="card filterCard" data-mode="4v4">4v4</div>
+<div class="card filterCard" data-mode="6v6">6v6</div>
+<div class="card filterCard" data-mode="Battle Royal">Battle Royal</div>
+</div>
+
+
+<div id="messages"></div>
 </div>
 
 <div class="popup" id="popup">
@@ -270,6 +302,10 @@ move: { enable: true, speed: 2 }
 </div>
 
 <script type="module">
+
+    window.goBack=function(){
+window.location.href="giveawy.html";
+}
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -290,6 +326,7 @@ const db = getDatabase(app);
 let selectedServer="";
 let selectedMode="";
 let currentReplyNumber="";
+let currentFilter = "ALL";
 
 // ================= SERVER SELECT =================
 document.querySelectorAll("#servers .card").forEach(card=>{
@@ -306,6 +343,16 @@ card.onclick=()=>{
 document.querySelectorAll("#modes .card").forEach(c=>c.classList.remove("selected"));
 card.classList.add("selected");
 selectedMode=card.innerText;
+}
+});
+
+// ================= MODE FILTER SYSTEM =================
+document.querySelectorAll("#modeFilters .filterCard").forEach(card=>{
+card.onclick=()=>{
+document.querySelectorAll("#modeFilters .filterCard").forEach(c=>c.classList.remove("selected"));
+card.classList.add("selected");
+currentFilter = card.getAttribute("data-mode");
+loadApplications();
 }
 });
 
@@ -338,11 +385,21 @@ document.getElementById("whatsapp").value="";
 document.getElementById("level").value="";
 }
 // ================= DISPLAY APPLICATIONS =================
+function loadApplications(){
+
 onValue(ref(db,"applications"),snapshot=>{
+
 document.getElementById("messages").innerHTML="";
+
 snapshot.forEach(child=>{
+
 let data=child.val();
 let key=child.key;
+
+// FILTER LOGIC
+if(currentFilter !== "ALL" && data.selectedMode !== currentFilter){
+return;
+}
 
 let div=document.createElement("div");
 div.className="message";
@@ -358,8 +415,14 @@ div.innerHTML=`
 `;
 
 document.getElementById("messages").appendChild(div);
+
 });
+
 });
+}
+
+// INITIAL LOAD
+loadApplications();
 
 // ================= DELETE FUNCTION =================
 window.deleteMsg=function(key){
@@ -418,4 +481,3 @@ document.getElementById("overlay").style.display="none";
 </script>
 </body>
 </html>
-
