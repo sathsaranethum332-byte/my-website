@@ -212,7 +212,12 @@ font-size:18px;
         <button class="btn" onclick="startLoading1()">APPLY</button>
     </div>
     
- 
+       <div class="card">
+        <h2>🎡 TOURNAMENT EVENT</h2>
+        <p>APPLY TO TOURNAMENT WITH EARN DIAMOND</p>
+        <button class="btn" onclick="startLoading3()">APPLY</button>
+    </div>
+    
    
 </div>
 <!-- LOADING SCREEN -->
@@ -239,6 +244,14 @@ function startLoading1(){
     },2500);
 }
 
+
+function startLoading3(){
+    document.getElementById("loader").classList.add("active");
+
+    setTimeout(()=>{
+        window.location.href="tunament.html";
+    },2500);
+}
 
 function startLoading2(){
     document.getElementById("loader").classList.add("active");
