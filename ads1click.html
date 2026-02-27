@@ -300,7 +300,7 @@ let checkClosed = setInterval(function(){
       let endTime = Date.now();
       let seconds = (endTime - startTime)/1000;
 
-      if(seconds >= 15){
+      if(seconds >= 40){
          coins+=5;
          adsWatched++;
          localStorage.setItem("coins",coins);
