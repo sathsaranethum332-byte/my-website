@@ -366,47 +366,121 @@ h2{
     border-radius:15px;
     font-size:12px;
 }
+/* ===== PRO LOGIN SCREEN ===== */
 
 #loginScreen{
     position:fixed;
     width:100%;
     height:100vh;
-    background:linear-gradient(45deg,#000000e2,#09003ee2);
+    background:radial-gradient(circle at top,#0f0c29,#302b63,#24243e);
     display:flex;
     justify-content:center;
     align-items:center;
     z-index:999999;
+    overflow:hidden;
 }
 
+/* Animated Glow Background */
+#loginScreen::before{
+    content:"";
+    position:absolute;
+    width:400px;
+    height:400px;
+    background:cyan;
+    filter:blur(150px);
+    opacity:0.3;
+    animation:moveGlow 6s infinite alternate;
+}
+
+@keyframes moveGlow{
+    0%{transform:translate(-100px,-100px);}
+    100%{transform:translate(100px,100px);}
+}
+
+/* Glass Login Box */
 .login-box{
-    width: 70%;
-    background:rgb(10, 1, 51);
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 0 30px cyan;
+    width:320px;
+    padding:35px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(25px);
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 0 40px rgba(0,255,255,0.4);
     text-align:center;
+    position:relative;
+    animation:loginPop 0.8s ease;
 }
 
-.login-box input{
-    width:90%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:10px;
-    border:none;
+/* Entrance Animation */
+@keyframes loginPop{
+    from{transform:scale(0.7); opacity:0;}
+    to{transform:scale(1); opacity:1;}
 }
 
+.login-box h2{
+    font-size:22px;
+    letter-spacing:2px;
+    margin-bottom:15px;
+    text-shadow:0 0 15px cyan;
+}
+
+/* Profile Preview */
 .login-box img{
-    width:100px;
-    height:100px;
+    width:110px;
+    height:110px;
     border-radius:50%;
     object-fit:cover;
-    margin-bottom:10px;
+    margin-bottom:15px;
     display:none;
+    border:3px solid cyan;
+    box-shadow:0 0 20px cyan;
+    animation:fadeIn 0.5s ease;
 }
 
-.locked{
-    pointer-events:none;
-    opacity:0.5;
+/* Input Fields */
+.login-box input[type="text"],
+.login-box input[type="file"]{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:12px;
+    border:none;
+    outline:none;
+    background:rgba(255,255,255,0.1);
+    color:white;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.login-box input:focus{
+    box-shadow:0 0 15px cyan;
+    background:rgba(0,255,255,0.1);
+}
+
+/* PRO Button */
+.login-box button{
+    width:100%;
+    margin-top:15px;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(45deg,#00f2ff,#8e2de2);
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 20px cyan;
+}
+
+.login-box button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 35px #00f2ff;
+}
+
+/* Floating Text Glow */
+.login-box p{
+    font-size:12px;
+    color:#ccc;
 }
 /* ===== PROFILE SLIDE PANEL ===== */
 
@@ -657,6 +731,88 @@ h2{
   z-index:9999;
 }
 
+
+/* ===== WHY SECTION ===== */
+.why-section{
+    margin-top:40px;
+}
+
+.why-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.why-card{
+    padding:15px;
+    background:linear-gradient(45deg,#000428,#004e92);
+    border-radius:15px;
+    box-shadow:0 0 20px cyan;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.why-card:hover{
+    transform:scale(1.07);
+    box-shadow:0 0 35px #00f2ff;
+}
+
+/* ===== OFFER BANNER ===== */
+.offer-banner{
+    margin:40px 0;
+    padding:20px;
+    border-radius:20px;
+    background:linear-gradient(45deg,#8e2de2,#00f2ff);
+    font-weight:bold;
+    box-shadow:0 0 40px #00f2ff;
+    animation:pulseOffer 2s infinite;
+}
+
+@keyframes pulseOffer{
+    0%{box-shadow:0 0 20px cyan;}
+    50%{box-shadow:0 0 50px #00f2ff;}
+    100%{box-shadow:0 0 20px cyan;}
+}
+
+.countdown{
+    margin-top:10px;
+    font-size:18px;
+    font-weight:900;
+}
+
+/* ===== WHATSAPP FLOAT ===== */
+.whatsapp-float{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:linear-gradient(45deg,#25D366,#128C7E);
+    padding:12px 20px;
+    border-radius:30px;
+    color:white;
+    font-weight:bold;
+    text-decoration:none;
+    box-shadow:0 0 20px #25D366;
+    animation:glowWA 1.5s infinite alternate;
+    z-index:9999;
+}
+
+@keyframes glowWA{
+    from{box-shadow:0 0 15px #25D366;}
+    to{box-shadow:0 0 35px #25D366;}
+}
+
+/* ===== PRO FOOTER ===== */
+.pro-footer{
+    margin-top:50px;
+    padding:25px;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(20px);
+    display:grid;
+    gap:10px;
+    border-top:1px solid cyan;
+    font-size:14px;
+}
 </style>
 
 
@@ -764,6 +920,29 @@ h2{
            <img src="baner12.png">
     
 </div>
+
+<!-- WHY CHOOSE US -->
+<div class="why-section">
+    <h2>🔥 WHY CHOOSE US 🔥</h2>
+    <div class="why-container">
+        <div class="why-card">⚡ Instant Delivery</div>
+        <div class="why-card">🔒 100% Secure</div>
+        <div class="why-card">💬 24/7 Support</div>
+        <div class="why-card">💰 Best Prices</div>
+    </div>
+</div>
+
+<!-- FLASH OFFER -->
+<div class="offer-banner">
+    🔥 Limited Time Offer <br>
+    🎁 Weekly Giveaway <br>
+    💎 Double Diamonds Weekend
+    <div class="countdown">
+        Offer Ends In: <span id="timer">00:00:00</span>
+    </div>
+</div>
+
+
 <div class="sticky-ad">
   <!-- your ad code here -->
 </div>
@@ -1105,6 +1284,7 @@ function sendOrder(){
         return;
     }
 
+
     let message = "🎮 Game: " + selectedGame +
     "%0A💎 Package: " + diamond +
     "%0A💰 Price: Rs " + price +
@@ -1113,7 +1293,34 @@ function sendOrder(){
 
     window.open("https://wa.me/94756706560?text=" + message, "_blank");
 }
+
+// Countdown Timer (24 hours demo)
+let countDownDate = new Date().getTime() + (24 * 60 * 60 * 1000);
+
+let x = setInterval(function() {
+
+  let now = new Date().getTime();
+  let distance = countDownDate - now;
+
+  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("timer").innerHTML =
+  hours + "h " + minutes + "m " + seconds + "s ";
+
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("timer").innerHTML = "EXPIRED";
+  }
+}, 1000);
+
 /* ===== LOGIN + PROFILE SYSTEM ===== */
+
+document.getElementById("loginScreen").addEventListener("click",function(){
+    document.querySelector(".login-box").style.animation="loginPop 0.4s ease";
+});
+
 
 function lockWebsite(){
     document.querySelectorAll(".card, button").forEach(el=>{
@@ -1258,6 +1465,20 @@ onlineUsersRef.on("value", (snapshot) => {
 });
 </script>
 <!-- 🔥 ONLINE USER COUNTER FIREBASE END -->
+
+<a href="https://wa.me/94756706560" target="_blank" class="whatsapp-float">
+    🟢 WhatsApp Chat Now
+</a>
+
+
+<footer class="pro-footer">
+    <div>About</div>
+    <div>Contact</div>
+    <div>Terms</div>
+    <div>Privacy</div>
+    <div>Version 1.0</div>
+    <div>© 2026 ROLLEX STORE</div>
+</footer>
 </body>
 </html>
 
