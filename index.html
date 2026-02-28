@@ -813,6 +813,155 @@ h2{
     border-top:1px solid cyan;
     font-size:14px;
 }
+
+/* ===== DIAMOND TOP NOTIFICATION ===== */
+
+#diamondNotification{
+    position:fixed;
+    top:-120px;
+    left:50%;
+    transform:translateX(-50%);
+    background:linear-gradient(45deg,#240176,#8f00ff);
+    padding:15px 15px;
+    border-radius:18px;
+    box-shadow:0 0 30px #00f2ff;
+    backdrop-filter:blur(20px);
+    z-index:1000000;
+    transition:all 0.6s cubic-bezier(.68,-0.55,.27,1.55);
+    opacity:0;
+}
+
+#diamondNotification.show{
+    top:20px;
+    opacity:1;
+}
+
+.notify-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:white;
+}
+
+.notify-icon{
+    font-size:22px;
+    animation:pulseDiamond 1s infinite alternate;
+}
+
+@keyframes pulseDiamond{
+    from{transform:scale(1);}
+    to{transform:scale(1.2);}
+}
+
+.notify-title{
+    font-weight:900;
+    font-size:14px;
+}
+
+.notify-sub{
+    font-size:13px;
+    opacity:0.9;
+}
+/* ===== ULTRA PRO FOOTER ===== */
+
+.pro-footer{
+    margin-top:60px;
+    padding:40px 20px;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(25px);
+    border-top:1px solid rgba(0,255,255,0.3);
+    position:relative;
+    overflow:hidden;
+}
+
+/* Glow Line */
+.footer-glow-line{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:3px;
+    background:linear-gradient(90deg,#00f2ff,#8e2de2,#00f2ff);
+    background-size:200% 100%;
+    animation:glowMove 4s linear infinite;
+}
+
+@keyframes glowMove{
+    0%{background-position:0% 0;}
+    100%{background-position:200% 0;}
+}
+
+/* Layout */
+.footer-content{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:30px;
+    margin-bottom:30px;
+    text-align:left;
+}
+
+.footer-column h3,
+.footer-column h4{
+    color:#00f2ff;
+    margin-bottom:15px;
+}
+
+.footer-column a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    margin:8px 0;
+    transition:0.3s;
+}
+
+.footer-column a:hover{
+    color:#00f2ff;
+    transform:translateX(5px);
+}
+
+/* Social Icons */
+.social-row{
+    text-align:center;
+    margin:20px 0;
+}
+
+.social-icon{
+    display:inline-block;
+    margin:0 10px;
+    font-size:22px;
+    padding:10px 14px;
+    border-radius:50%;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.social-icon:hover{
+    transform:scale(1.02);
+}
+
+/* Payment Row */
+.payment-row{
+    text-align:center;
+    margin-top:15px;
+    font-size:14px;
+    opacity:0.9;
+}
+
+.payment-row span{
+    margin:0 12px;
+}
+
+/* Bottom */
+.footer-bottom{
+    margin-top:25px;
+    text-align:center;
+    font-size:13px;
+    opacity:0.7;
+}
+
+.social-row img{
+    width: 10%;
+}
 </style>
 
 
@@ -862,6 +1011,19 @@ h2{
     <span class="menu-btn" onclick="openMenu()">☰</span>
 </header>
 
+<!-- 💎 DIAMOND SELECT NOTIFICATION -->
+<div id="diamondNotification">
+    <div class="notify-box">
+        <span class="notify-icon">💎</span>
+        <div class="notify-text">
+            <div class="notify-title">Diamond Selected</div>
+            <div class="notify-sub" id="diamondNotifyText">
+                Package Selected
+            </div>
+        </div>
+    </div>
+</div>
+
 <div style="position:absolute; right:70px; top:25px; font-size:14px;">
 🔴 Online: <span id="onlineCount">0</span>
 </div>
@@ -880,7 +1042,7 @@ h2{
 <p>WhatsApp: 0756706560<l> (Recommended)</l></p>
 
 <h3>👁 View</h3>
-<p>Version 1.0 | Secure Payment</p>
+<p>Version 1.5 | Secure Payment</p>
 ------------------------<br>
 ------------------------
 
@@ -898,6 +1060,8 @@ h2{
 
 
 <div class="lt">⚡ ROLLEX GAMING TOPUP ⚡</div>
+
+
 
 <div class="ad-container"><script>
   atOptions = {
@@ -1249,6 +1413,7 @@ cards.forEach(card => {
 
     const name = this.getAttribute("data-name");
     const price = this.getAttribute("data-price");
+    showDiamondNotification(name);
 
     // save values
     document.getElementById("selectedDiamond").value = name;
@@ -1479,22 +1644,83 @@ onlineUsersRef.on("value", (snapshot) => {
   const count = snapshot.numChildren();
   document.getElementById("onlineCount").innerText = count;
 });
+
+function showDiamondNotification(packageName){
+    const notify = document.getElementById("diamondNotification");
+    const text = document.getElementById("diamondNotifyText");
+
+    text.innerText = packageName + " Selected Successfully ✅";
+
+    notify.classList.add("show");
+
+    setTimeout(()=>{
+        notify.classList.remove("show");
+    },2000);
+}
+
+
 </script>
 <!-- 🔥 ONLINE USER COUNTER FIREBASE END -->
 
 <a href="https://wa.me/94756706560" target="_blank" class="whatsapp-float">
-    🟢 WhatsApp Chat Now
+    🔴 WhatsApp Chat Now
 </a>
 
 
+<!-- 🔥 ULTRA PRO FOOTER START -->
 <footer class="pro-footer">
-    <div>About</div>
-    <div>Contact</div>
-    <div>Terms</div>
-    <div>Privacy</div>
-    <div>Version 1.0</div>
-    <div>© 2026 ROLLEX STORE</div>
+
+    <!-- Animated Glow Line -->
+    <div class="footer-glow-line"></div>
+
+    <div class="footer-content">
+
+        <!-- Column 1 -->
+        <div class="footer-column">
+            <h3>ROLLEX STORE</h3>
+            <p>Fast & Secure Gaming Topup Service.</p>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="footer-column">
+            <h4>Quick Links</h4>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="footer-column">
+            <h4>Support</h4>
+            <a href="#">FAQ</a>
+            <a href="#">Giveaways</a>
+            <a href="#">Customer Feedback</a>
+        </div>
+
+    </div>
+
+    <!-- Social Icons -->
+    <div class="social-row">
+        <a href="#" class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"></a>
+        <a href="#" class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"></a>
+        <a href="https://wa.me/94756706560?text=hi rollex"  class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"></a>
+    </div>
+
+    <!-- Payment Icons -->
+    <div class="payment-row">
+        <span>💳 Visa</span>
+        <span>💳 Mastercard</span>
+        <span>🏦 Bank Transfer</span>
+        <span>🪙 Crypto</span>
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 ROLLEX STORE | Version 2.0 PRO
+    </div>
+
 </footer>
+<!-- 🔥 ULTRA PRO FOOTER END -->
 </body>
 </html>
 
