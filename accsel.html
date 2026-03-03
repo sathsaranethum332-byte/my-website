@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 PRO FF ACCOUNT STORE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#0f0f1a,#1a1a2e);
+    color:white;
+    margin:0;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    background:linear-gradient(45deg,#00f7ff,#ff00c8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-size:28px;
+}
+
+form{
+    background:#1b1b2f;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:30px;
+    box-shadow:0 0 20px #00000080;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:none;
+    background:#2a2a40;
+    color:white;
+    resize:none;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.uploadBtn{
+    background:linear-gradient(45deg,#00f7ff,#00c3ff);
+    width:100%;
+}
+
+.orderBtn{
+    background:linear-gradient(45deg,#ff0080,#ff4da6);
+    margin-top:10px;
+    width:100%;
+}
+
+.deleteBtn{
+    background:red;
+    margin-top:8px;
+    width:100%;
+}
+
+.card{
+    background:#1b1b2f;
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 0 15px #00000080;
+}
+
+.card img{
+    width:100%;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+#preview{
+    width:100%;
+    margin-top:10px;
+    border-radius:10px;
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔥 FREE FIRE ACCOUNT STORE</h1>
+
+<input type="text" id="searchID" placeholder="🔍 Search by Unique ID">
+
+<form id="accountForm">
+
+<input type="text" id="accId" placeholder="Account ID" required>
+
+<select id="server">
+<option value="India">India</option>
+<option value="Singapore">Singapore</option>
+<option value="Brazil">Brazil</option>
+</select>
+
+<input type="number" id="level" placeholder="Account Level" required>
+<input type="number" id="price" placeholder="Selling Price (Rs)" required>
+<input type="text" id="phone" placeholder="Phone Number" required>
+
+<textarea id="description" placeholder="Account Details / Skins / Guns / Bundles..." rows="4" required></textarea>
+
+<input type="file" id="photo" accept="image/*" required>
+
+<img id="preview">
+
+<button type="button" class="uploadBtn" onclick="uploadAccount()">🚀 UPLOAD ACCOUNT</button>
+
+</form>
+
+<div id="accounts"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBrxqLz7WkZxcV4bAGVnQBHBMUsJghyrsU",
+  authDomain: "count-1d259.firebaseapp.com",
+  databaseURL: "https://count-1d259-default-rtdb.firebaseio.com",
+  projectId: "count-1d259",
+  storageBucket: "count-1d259.firebasestorage.app",
+  messagingSenderId: "185499926971",
+  appId: "1:185499926971:web:0498d51d6b02ca18f7449e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const ADMIN_PASSWORD = "12345";
+const ADMIN_WHATSAPP = "94756706560";
+
+function generateUniqueID(){
+    return "ACC" + Math.floor(100000 + Math.random() * 900000);
+}
+
+let allAccounts = [];
+
+/* IMAGE PREVIEW */
+document.getElementById("photo").addEventListener("change", function(){
+    const file = this.files[0];
+    if(file){
+        const reader = new FileReader();
+       reader.onload = e=>{
+    const preview = document.getElementById("preview");
+    preview.src = e.target.result;
+    preview.style.display="block";
+};
+        reader.readAsDataURL(file);
+    }
+});
+
+window.uploadAccount = function(){
+
+let accId = document.getElementById("accId").value;
+let server = document.getElementById("server").value;
+let level = document.getElementById("level").value;
+let price = document.getElementById("price").value;
+let phone = document.getElementById("phone").value;
+let description = document.getElementById("description").value;
+let file = document.getElementById("photo").files[0];
+
+if(!file){
+    alert("Upload Photo Required");
+    return;
+}
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+    let pass = prompt("Enter Admin Password");
+
+    if(pass !== ADMIN_PASSWORD){
+        alert("Wrong Password");
+        return;
+    }
+
+    push(ref(db,"accounts"),{
+        uniqueID:generateUniqueID(),
+        accId:accId,
+        server:server,
+        level:Number(level),
+        price:Number(price),
+        phone:phone,
+        description:description,
+        photo:e.target.result
+    });
+
+    alert("Uploaded Successfully");
+
+    document.getElementById("accountForm").reset();
+    document.getElementById("preview").style.display="none";
+};
+
+reader.readAsDataURL(file);
+};
+
+function loadAccounts(){
+onValue(ref(db,"accounts"), snapshot=>{
+allAccounts=[];
+snapshot.forEach(child=>{
+allAccounts.push({key:child.key,...child.val()});
+});
+allAccounts.reverse();
+displayAccounts(allAccounts);
+});
+}
+
+function displayAccounts(list){
+accounts.innerHTML="";
+list.forEach(data=>{
+accounts.innerHTML += `
+<div class="card">
+<img src="${data.photo}">
+<p><b>Unique ID:</b> ${data.uniqueID}</p>
+<p><b>ID:</b> ${data.accId}</p>
+<p><b>Server:</b> ${data.server}</p>
+<p><b>Level:</b> ${data.level}</p>
+<p><b>Price:</b> Rs.${Number(data.price).toLocaleString()}</p>
+<p><b>Details:</b> ${data.description}</p>
+
+<button class="orderBtn" onclick="orderNow('${data.uniqueID}','${data.accId}','${data.price}','${data.description.replace(/'/g,"")}')">🛒 ORDER NOW</button>
+
+<button class="deleteBtn" onclick="deleteAccount('${data.key}')">❌ DELETE</button>
+</div>
+`;
+});
+}
+
+searchID.addEventListener("input", function(){
+let value = this.value.toLowerCase();
+let filtered = allAccounts.filter(acc =>
+acc.uniqueID.toLowerCase().includes(value)
+);
+displayAccounts(filtered);
+});
+
+window.deleteAccount = function(key){
+let pass = prompt("Enter Admin Password to Delete");
+if(pass !== ADMIN_PASSWORD){ alert("Wrong Password"); return; }
+remove(ref(db,"accounts/"+key));
+alert("Deleted");
+};
+
+window.orderNow = function(uniqueID,id,price,description){
+
+let message = `🔥 ACCOUNT ORDER
+
+Unique ID: ${uniqueID}
+Account ID: ${id}
+Price: Rs.${price}
+
+Account Details:
+${description}
+
+Send Details Please.`;
+
+window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`);
+};
+
+loadAccounts();
+
+</script>
+
+</body>
+</html>
